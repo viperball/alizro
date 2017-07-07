@@ -1,0 +1,63 @@
+prontera.gat,165,75,4	script	Stalker	603,{
+	//if ( StalkerSkill != 0 )goto Remove_Skill;
+	if ( getskilllv(225) == 0 ) goto End_Talk;
+	if ( getskilllv(225) > 0 ) goto Start_Talk;
+
+	Remove_Skill:
+		skill StalkerSkill,0,0;
+		set StalkerSkill,0;
+		dispbottom "[ Stalker NPC ] : ลบ Skill ปัจจุบันออกแล้ว..";
+		dispbottom "[ Stalker NPC ] : ถึงแม้จะมี icon ให้เห็นอยู่ก็ตาม แต่คุณจะไม่สามารถใช้ได้";
+		end;
+	End_Talk:
+		mes "[ ^FF0000Stalker^000000 ]";
+		mes "โปรดแน่ใจว่าคุณได้เรียน Plagiarism แล้ว";
+		close;
+	Start_Talk:
+		mes "[ ^FF0000Stalker^000000 ]";
+		mes "ตอนนี้เรามีสกิลอยู่แค่นี้ แน่นอนมันไม่ได้มีไว้แจก ให้ท่านฟรีๆหรอกนะ";
+		next;
+	switch(select(
+	            "Acid Demonstration",                // Case 1:
+				"First Wind",                // Case 2:
+				"Jack Frost",                // Case 3:
+				"Sacrifice",                // Case 4:
+				"Spear of Ice",                // Case 5:
+				"Strom Gust",				// Case 6:
+				"Meteor Storm",  //7
+				"Lord of Vermilion", //8
+				"Arrow Storm",    //9
+				"Duple Light"   //10
+				)){                
+				
+	// -- Edit Format :  callsub S_CopySkill,<Skill ID>,<Skill Level 10>,<Skill Cost>;
+	// -- Leave the Level as 10 better.because after they relog ..they will auto get level 10 Skills.
+	// -- I think can add up to 128 Case. Which is 128 Skills choose-able~
+	// -- If you want it to announce then add "announce" at the back of <skill cost> like Case 10.
+		case 1:    callsub S_CopySkill,4490,10,500000,"announce";                // Acid
+		case 2:    callsub S_CopySkill,540,5,500000,"announce";                // First Wind
+		case 3:    callsub S_CopySkill,2204,5,500000,"announce";                // Jack Frost
+		case 4:    callsub S_CopySkill,368,5,500000,"announce";                // Sacrifice
+		case 5:    callsub S_CopySkill,537,10,500000,"announce";                // Spear of Ice
+		case 6:    callsub S_CopySkill,89,10,500000,"announce";                // Strom Gust
+		case 7:    callsub S_CopySkill,83,10,500000,"announce";                // Meteor Storm
+		case 8:    callsub S_CopySkill,85,10,500000,"announce";  				//Lord_of_Vermilion
+		case 9:    callsub S_CopySkill,2233,10,500000,"announce";  //Arrow Storm
+		case 10:    callsub S_CopySkill,2054,10,500000,"announce"; //Duple Light
+		}
+		
+	S_CopySkill:
+		if ( Zeny < getarg(2)){
+			mes "[ ^FF0000Stalker^000000 ]";
+			mes "คุณมีเงินไม่ถึง "+getarg(2)+" Zeny สำหรับค่าเรียนสกิลนี้";
+			close;
+			}
+		skill getarg(0),getarg(1),0;
+		set Zeny,Zeny-getarg(2);
+		set StalkerSkill,getarg(0);
+		dispbottom "[ Stalker ] : ค่าเรียนคือ [ "+getarg(2)+" Zeny ].";
+		dispbottom "[ Stalker ] : คุณได้เรียนรู้เรียบร้อยแล้ว";
+		if (compare(getarg(3),"announce")) announce strcharinfo(0) + " พึ่งได้เรียนรู้สกิลใหม่ !!",bc_map;
+		end;
+    
+}

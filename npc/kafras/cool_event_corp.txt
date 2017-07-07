@@ -1,0 +1,184 @@
+//===== rAthena Script ======================================= 
+//= พนักงานบริษัท Cool Event
+//===== By: ================================================== 
+//= Gepard
+//===== Current Version: ===================================== 
+//= 1.6
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= พนักงานบริษัท Cool Event (Save, Storage & Pushcart Service)
+//= in Arunafeltz Region.
+//===== Additional Comments: ================================= 
+//= 1.0 First version, iRO Sakray X.4 [Gepard]
+//= 1.1 Optimized, fixed a conditional bug [Lupus]
+//= 1.1a Redo back. It wasn't a bug [Lupus]
+//= 1.2 Added Rachel พนักงานบริษัท Cool Event [Playtester]
+//= 1.3 Added cutins, closed Kafra Password exploit
+//=     until we got a client/packet based password support [Lupus]
+//= 1.4 Added Veins พนักงานบริษัท Cool Event. [L0ne_W0lf]
+//= 1.5 Cool Event Corp staff is now more iRO like. [L0ne_W0lf]
+//= 1.6 Wrote a basic function and added VIP features. [Euphy]
+//============================================================ 
+
+//callfunc "F_CoolEventCorp","<menu>","<location>","<save map>",<x>,<y>,"<warp map>";
+function	script	F_CoolEventCorp	{
+	cutin "zonda_01",2;
+	mes "[พนักงานบริษัท Cool Event]";
+	mes "ยินดีต้อนรับสู่บริษัท Cool Event";
+	mes "พนักงานของเราทำงานอย่างดี";
+	mes "เพื่อให้ลูกค้าอย่างท่านพอใจ";
+	mes "และคุณภาพการบริการที่ดี";
+	mes "แล้วให้ข้าช่วยอะไรท่านได้บ้างล่ะ?";
+	next;
+	switch(select(getarg(0))) {
+	case 1:
+		mes "[พนักงานบริษัท Cool Event]";
+		mes "จุดเกิดของท่าน";
+		mes "ได้บันทึกเอาไว้ที่นี่";
+		mes getarg(1)+".";
+		mes "ขอบคุณท่านที่ใช้บริการของ";
+		mes "บริษัท Cool Event~";
+		savepoint getarg(2),getarg(3),getarg(4),1,1;
+		close2;
+		break;
+	case 2:
+		mes "[พนักงานบริษัท Cool Event]";
+		if(!callfunc("F_CanOpenStorage")){
+			mes "ข้าขอโทษ แต่ท่าน";
+			mes "ต้องมีสกิล Basic Skill";
+			mes "เลเวล 6 ขึ้นไป";
+			mes "เพื่อใช้บริการคลังเก็บของ";
+			close2;
+			break;
+		}
+		if(Zeny < 40){
+			mes "ข้าขอโทษ แต่เงินของท่าน";
+			mes "ไม่พอจ่ายบริการคลังเก็บของ";
+			mes "บริการคลังเก็บของมีค่าใช้จ่าย 40 เซนี";
+			close2;
+			break;
+		}
+		set Zeny, Zeny - 40;
+		mes "ให้ข้าเปิดคลังเก็บของของท่าน";
+		mes "ขอบคุณที่สนับสนุน บริษัท Cool Event";
+		mes "โดยการใช้บริการคลังเก็บของของเรา";
+		mes "ขอให้โชคดี~";
+		callfunc("F_CheckKafCode");	//check your storage password, if set
+		close2;
+		openstorage;
+		break;
+	case 3:
+		mes "โปรดเลือกจุดหมาย";
+		next;
+		if (VIP_SCRIPT && !vip_status(1))
+			set .@cost,4400;
+		else
+			set .@cost,2200;
+		.@destination$ = getarg(5);
+		if (select(.@destination$ +" -> "+ .@cost +" z:ยกเลิก") == 1) {
+			if ((countitem(7060) != 0) || (Zeny >= .@cost)) {
+				if (countitem(7060) != 0) {
+					delitem 7060,1; //Warp_Free_Ticket
+				}
+				else {
+					set Zeny,Zeny-.@cost;
+				}
+				if (.@destination$ == "Veins") warp "veins",205,101;
+				else if (.@destination$ == "Rachel") warp "rachel",115,125;
+				cutin "",255;
+				end;
+			}
+			else {
+				mes "[พนักงานบริษัท Cool Event]";
+				mes "ข้าขอโทษ แต่ท่านไม่มีเซนีพอ";
+				mes "ที่จะใช้บริการวาร์ป";
+				mes "ค่าใช้จ่ายบริการวาร์ปคือ";
+				mes "ไปยัง "+ .@destination$ +" ใช้ "+.@cost+" เซนี";
+			}
+		}
+		close2;
+		break;
+	case 4:
+		mes "[พนักงานบริษัท Cool Event]";
+		if(BaseClass != Job_Merchant){
+			mes "ข้าขอโทษแต่บริการเช่ารถเข็น";
+			if (checkre(0))
+				mes "ใช้ได้เฉพาะสายอาชีพพ่อค้าเท่านั้น";
+			else {
+				mes "ใช้ได้เฉพาะ Merchants,";
+				mes "Blacksmiths, White Smiths,";
+				mes "Alchemists และ Creators";
+			}
+			close2;
+			break;
+		}
+		if(getskilllv("MC_PUSHCART") == 0){
+			mes "ท่านต้องมีสกิล Pushcart";
+			mes "ถึงจะเช่ารถเข็นได้";
+			close2;
+			break;
+		}
+		if(checkcart() == 1){
+			mes "ท่านมีรถเข็นอยู่แล้ว";
+			mes "ข้าไม่สามารถให้รถเข็นท่านได้มากกว่าหนึ่ง";
+			close2;
+			break;
+		}
+		if(countitem(7061)){
+			delitem 7061,1; //Cart_Free_Ticket
+			setcart;
+			close2;
+			break;
+		}
+		mes "การเช่ารถเข็น";
+		mes "มีค่าใช้จ่าย 800 เซนี";
+		mes "ท่านต้องการจะเช่ารถเข็นไหม?";
+		next;
+		if(select("เช่ารถเข็น:ยกเลิก") == 1){
+			if(Zeny < 800){
+				mes "[พนักงานบริษัท Cool Event]";
+				mes "ข้าขอโทษ แต่ท่านไม่มีเซนีพอ";
+				mes "มีค่าใช้จ่าย 800 เซนี เพื่อเช่ารถเข็น";
+			} else {
+				set Zeny, Zeny - 800;
+				setcart;
+			}
+		}
+		close2;
+		break;
+	case 5:
+		callfunc("F_SetKafCode","[พนักงานบริษัท Cool Event]","บริษัท Cool Event");
+		//the function closes msg and removes cutins
+	case 6:
+	default:
+		mes "[พนักงานบริษัท Cool Event]";
+		mes "บริษัท Cool Event พยายามอย่างหนัก";
+		mes "เพื่อที่ให้ได้บริการที่ดีที่สุดสำหรับลูกค้า";
+		mes "ขอบคุณที่ใช้บริการของเราเป็นอย่างสูง";
+		close2;
+	}
+	cutin "", 255;
+	end;
+}
+
+hugel,88,168,4	script	พนักงาน บ. Cool Event::CoolEventCorpStaffHugel	874,{
+	callfunc "F_CoolEventCorp",
+		"เซฟจุดเกิด:ใช้บริการคลังเก็บของ::เช่ารถเข็น:ใช้บริการเปลี่ยนรหัสคลังเก็บของ:ยกเลิก",
+		"ในหมู่บ้าน Hugel","hugel",96,155;
+	end;
+}
+
+rachel,109,138,5	script	พนักงาน บ. Cool Event::CoolEventCorpStaffRachel	874,{
+	callfunc "F_CoolEventCorp",
+		"เซฟจุดเกิด:ใช้บริการคลังเก็บของ::เช่ารถเข็น:ใช้บริการเปลี่ยนรหัสคลังเก็บของ:ยกเลิก",
+		"ในเมือง Rachel","rachel",113,137,"Veins";
+	end;
+}
+
+veins,208,128,5	script	พนักงาน บ. Cool Event::CoolEventCorpStaffVeins	874,{
+	callfunc "F_CoolEventCorp",
+		"เซฟจุดเกิด:ใช้บริการคลังเก็บของ::เช่ารถเข็น:ใช้บริการเปลี่ยนรหัสคลังเก็บของ:ยกเลิก",
+		"ในเมือง Veins","veins",204,103,"Rachel";
+	end;
+}

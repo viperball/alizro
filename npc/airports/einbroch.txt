@@ -1,0 +1,85 @@
+//===== rAthena Script ======================================= 
+//= Einbroch Airport Staff
+//===== By: ================================================== 
+//= L0ne_W0lf, Muad_Dib
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Einbroch Airport Staff
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+airport,143,43,5	script	Airport Staff#airport1a::airport1	90,{
+	mes "[Airport Staff]";
+	mes "ยินดีต้อนรับสู่ ท่ายานเหาะ Einbroch";
+	mes "ที่ที่ไม่เคยหยุดบินไปยังเมือง Juno, Lighthalzen และ Hugel";
+	next;
+	if (select("ขึ้นยานเหาะ:ยกเลิก") == 1) {
+		mes "[พนักงานท่ายานเหาะ]";
+		mes "ยานเหาะมีค่าใช้จ่าย 1,200 zeny แต่ถ้าคุณมีตั๋วฟรีสำหรับยานเหาะ";
+		mes "ก็จะไม่มีค่าใช้จ่าย";
+		mes "ท่านจะขึ้นเรือเหาะหรือไม่?";
+		next;
+		if (select("ใช่:ยังไม่ขึ้น") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "airport",148,51;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "airport",148,51;
+				end;
+			}
+			mes "[Airport Staff]";
+			mes "ข้าขอโทษ แต่ท่านไม่มีตั๋วฟรีหรือไม่มีเงินพอสำหรับขึ้นเรือเหาะ";
+			mes "ค่าใช้จ่ายสำหรับขึ้นเรือเหาะทั้งหมด 1,200 zeny";
+			close;
+		}
+	}
+	mes "[Airport Staff]";
+	mes "ขอบคุณท่านมากและขอให้โชคดี";
+	close;
+}
+
+airport,158,43,5	duplicate(airport1)	Airport Staff#airport1b	90
+airport,126,43,5	duplicate(airport1)	Airport Staff#airport1c	90
+
+airport,143,49,3	script	Arrival Staff#airport2a::airport2	90,{
+	mes "[Arrival Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Einbroch";
+	mes "ถ้าท่านเพิ่งเคยขึ้นยานเหาะครั้งแรก ให้ข้าได้แนะนำท่านเกี่ยวกับสถานีนี้ อย่างไรก็ตามท่ายานเหาะนี้จะจอดเทียบท่าที่";
+	mes "Juno, Lighthalzen และ Hugel";
+	next;
+	if (select("ออกไปยังสถานีหลัก:ยกเลิก") == 1) {
+		mes "[Arrival Staff]";
+		mes "เมื่อท่านเข้ามายังสถานีหลัก ท่านจะต้องจ่ายค่าเดินทางอีกครั้ง";
+		mes "เพื่อขึ้นไปยังยานเหาะ อย่าลืมว่าท่านควรจะดูสถานทีที่กำลังจะถึงเมื่อต้องการลง ตอนนี้จะไปยังยานเหาะหรือยัง?";
+		next;
+		if (select("ไป:ยังไม่ไป") == 1) {
+			warp "airport",142,40;
+			end;
+		}
+	}
+	mes "[Arrival Staff]";
+	mes "โอเค ขอบคุณสำหรับการอุดหนุนยานเหาะของเรา และขอให้ท่านเดินทางโดยสวัสดิภาพ~";
+	close;
+}
+
+airport,126,51,3	duplicate(airport2)	Arrival Staff#airport2b	90
+airport,158,50,3	duplicate(airport2)	Arrival Staff#airport2c	90
+
+einbroch,94,267,3	script	Airship Staff#ein01	91,{
+	mes "[Airship Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Einbroch";
+	mes "โปรดใช้ประตูนี้เพื่อลงไปยังท่ายานเหาะ Juno, Lighthalzen และ";
+	mes "Hugel ในอาณาจักร Schwaltzvalt";
+	next;
+	mes "[Airship Staff]";
+	mes "อย่างไรก็ตาม ถ้า Einbroch คือจุดหมายของท่าน โปรดเดินลงบันไดและถามพนักงานต้อนรับเพื่อไปยังสถานีหลัก ขอบคุณท่านมาก";
+	mes "และขอให้สนุกกับการเดินทาง";
+	close;
+}

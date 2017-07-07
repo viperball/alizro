@@ -1,0 +1,49 @@
+//===== rAthena Script =======================================
+//= War of Emperium Second Edition
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= WoE SE Guild Flags in Juno and Rachel
+//===== Additional Comments: =================================
+//= 1.0 First Version [L0ne_W0lf]
+//============================================================
+
+// Juno
+-	script	Himinn	-1,{
+	end;
+
+OnAgitInit2:
+OnRecvCastlesc01:
+	FlagEmblem GetCastleData("schg_cas01",1);
+	end;
+}
+prontera,165,194,5	duplicate(Himinn)	Himinn#1	722
+payon,123,322,4	duplicate(Himinn)	Himinn#2	722
+payon,166,157,3	duplicate(Himinn)	Himinn#3	722
+geffen,129,114,3	duplicate(Himinn)	Himinn#4	722
+aldebaran,155,93,4	duplicate(Himinn)	Himinn#5	722
+rachel,136,120,5	duplicate(Himinn)	Himinn#6	722
+yuno,116,187,5	duplicate(Himinn)	Himinn#7	722
+
+// Arunafeltz
+-	script	Mardol	-1,{
+	end;
+
+OnAgitInit2:
+OnRecvCastlear01:
+	FlagEmblem GetCastleData("arug_cas01",1);
+	end;
+}
+
+prontera,167,203,6	duplicate(Mardol)	Mardol#1	722
+payon,118,322,4	duplicate(Mardol)	Mardol#2	722
+payon,166,161,3	duplicate(Mardol)	Mardol#3	722
+geffen,131,123,6	duplicate(Mardol)	Mardol#4	722
+aldebaran,152,93,4	duplicate(Mardol)	Mardol#5	722
+rachel,138,126,6	duplicate(Mardol)	Mardol#6	722
+yuno,114,183,5	duplicate(Mardol)	Mardol#7	722
+

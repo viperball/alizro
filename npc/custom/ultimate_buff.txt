@@ -1,0 +1,104 @@
+//===== rAthena Script =======================================
+//= Universal Buff NPC
+//===== By: ==================================================
+//= Viperball
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= One-click automatic Buffss.
+//============================================================
+
+-	script	Buffer::Buffer	-1,{
+
+	mes "[ Buff Master ]";
+    mes "ต้องการพลังความแข็งแกร่งเพิ่มขึ้นหรือเปล่า?";
+    next;
+    menu "ได้โปรดเถอะ",GetBuffs,"ไม่เอา",No;
+
+    GetBuffs:
+    mes "[ Buff Master ]";
+    mes "ขอพลังจงสถิตย์อยู่กับท่าน...โอม...";
+    next;
+		percentheal 100,100;
+    if (VIP_SCRIPT && vip_status(VIP_STATUS_ACTIVE)){
+		skilleffect 34,0; sc_start SC_BLESSING,1260000,10;
+		skilleffect 29,0; sc_start SC_INCREASEAGI,1260000,10;
+		sc_start SC_STRFood,1260000,10;
+		sc_start SC_AGIFood,1260000,10;
+		sc_start SC_VITFood,1260000,10;
+		sc_start SC_INTFood,1260000,10;
+		sc_start SC_DEXFood,1260000,10;
+		sc_start SC_LUKFood,1260000,10;
+		skilleffect 380,0; 
+		sc_start SC_LIFEINSURANCE,1260000,0;
+		sc_start SC_ITEMBOOST,1260000,200;
+		sc_start SC_JEXPBOOST,1260000,25;
+		sc_start SC_EXPBOOST,1260000,25;
+	}
+	else{
+		skilleffect 34,0; sc_start SC_BLESSING,660000,10;
+		skilleffect 29,0; sc_start SC_INCREASEAGI,660000,10;
+		sc_start SC_STRFood,1260000,10;
+		sc_start SC_AGIFood,1260000,10;
+		sc_start SC_VITFood,1260000,10;
+		sc_start SC_INTFood,1260000,10;
+		sc_start SC_DEXFood,1260000,10;
+		sc_start SC_LUKFood,1260000,10;
+	}
+    close;
+
+
+    No:
+    mes "[ Buff Master ]";
+    mes "ท่านชั่งมั่นใจตัวเองเหลือเกิน";
+	mes "แต่ถ้าหากเปลี่ยนใจกลับมาหาข้าได้ทุกเมื่อ";
+	mes "ขอให้โชคดี";
+    close;
+
+}
+
+// Duplicates
+//============================================================
+alberta,25,240,6	duplicate(Buffer)	Buff Master#alb	834
+aldebaran,135,118,6	duplicate(Buffer)	Buff Master#alde	834
+amatsu,200,79,4	duplicate(Buffer)	Buff Master#ama	834
+ayothaya,207,169,6	duplicate(Buffer)	Buff Master#ayo	834
+comodo,184,158,6	duplicate(Buffer)	Buff Master#com	834
+einbech,57,36,6	duplicate(Buffer)	Buff Master#einbe	834
+einbroch,57,202,6	duplicate(Buffer)	Buff Master#einbr	834
+geffen,115,72,6	duplicate(Buffer)	Buff Master#gef	834
+gonryun,156,122,6	duplicate(Buffer)	Buff Master#gon	834
+hugel,89,150,6	duplicate(Buffer)	Buff Master#hug	834
+izlude,121,150,6	duplicate(Buffer)	Buff Master#izl	834	//Pre-RE: (125,118)
+jawaii,250,139,4	duplicate(Buffer)	Buff Master#jaw	834
+lighthalzen,152,100,6	duplicate(Buffer)	Buff Master#lhz	834
+louyang,226,103,4	duplicate(Buffer)	Buff Master#lou	834
+manuk,272,144,6	duplicate(Buffer)	Buff Master#man	834
+mid_camp,203,289,6	duplicate(Buffer)	Buff Master#mid	834
+moc_ruins,72,164,4	duplicate(Buffer)	Buff Master#moc	834
+morocc,153,97,6	duplicate(Buffer)	Buff Master#mor	834
+moscovia,220,191,4	duplicate(Buffer)	Buff Master#mos	834
+niflheim,212,182,5	duplicate(Buffer)	Buff Master#nif	834
+payon,179,106,4	duplicate(Buffer)	Buff Master#pay	834
+prontera,162,193,4	duplicate(Buffer)	Buff Master#prt	834
+prontera,105,71,5	duplicate(Buffer)	Buff Master#prt2	834
+rachel,125,116,6	duplicate(Buffer)	Buff Master#rac	834
+splendide,201,153,4	duplicate(Buffer)	Buff Master#spl	834
+thor_camp,249,74,4	duplicate(Buffer)	Buff Master#thor	834
+umbala,105,148,3	duplicate(Buffer)	Buff Master#umb	834
+veins,217,121,4	duplicate(Buffer)	Buff Master#ve	834
+xmas,143,136,4	duplicate(Buffer)	Buff Master#xmas	834
+yuno,164,45,4	duplicate(Buffer)	Buff Master#yuno	834
+
+// Duplicates (Renewal)
+//============================================================
+brasilis,194,221,6	duplicate(Buffer)	Buff Master#bra	834
+dewata,195,187,4	duplicate(Buffer)	Buff Master#dew	834
+dicastes01,201,194,4	duplicate(Buffer)	Buff Master#dic	834
+ecl_in01,45,60,4	duplicate(Buffer)	Buff Master#ecl	834
+malangdo,132,114,6	duplicate(Buffer)	Buff Master#mal	834
+malaya,227,204,6	duplicate(Buffer)	Buff Master#ma	834
+mora,55,152,4	duplicate(Buffer)	Buff Master#mora	834
+lasagna,198,173,4	duplicate(Buffer)	Buff Master#las	834

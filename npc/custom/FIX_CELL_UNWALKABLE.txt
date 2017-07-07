@@ -1,0 +1,5 @@
+-	script	F_CELL_FIX_KANIN	-1,{
+OnInit:
+	setcell "morocc",183,80,187,74,cell_walkable,1;
+	end;
+}

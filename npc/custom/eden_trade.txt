@@ -1,0 +1,90 @@
+moc_para01,20,20,4	script	Aliz	510,{
+	setarray .@itemname$[1],"Bubble Gum in Mouth","Four Leaf Clover","Chilly Breath","Fan in Mouth";
+	setarray .@itemID[1],5597,5596,18746,18712;
+	mes "[Aliz]";
+	mes "ตอนนี้เรามีสินค้า";
+	for(set @i,1; @i<5;set @i,@i+1){
+		mes @i+") "+.@itemname$[@i];
+	}
+	next;
+	set @Gold_coin,countitem(7929);
+	mes "[Aliz]";
+	mes "แต่ละชิ้นท่านสามารถแลกได้";
+	mes "โดยใช้ Gold Coin";
+	menu "แลกแบบระบุ [500 เหรียญ]",Lspecify,"แลกแบบสุ่ม [250 เหรียญ]",Lrandom,"ยกเลิก",Lend;
+Lspecify:
+	mes "ท่านเลือก: ^FF0000แลกแบบเจาะจง^000000";
+	mes "ต้องใช้ ^0000FF500^000000 เหรียญ";
+	if(@Gold_coin < 500) goto Lnocoin;
+	next;
+	mes "[Aliz]";
+	mes "กรุณาระบุสิ่งที่ท่านต้องการ: ";
+	set .@menu$, " ~"+(.@itemname$[1])+": ~"+(.@itemname$[2])+" : ~"+(.@itemname$[3])+" : ~"+(.@itemname$[4]);
+	switch(select(.@menu$)) {
+				case 1:
+						set .@Getitem,.@itemID[1];
+						set .@GetitemName$,.@itemname$[1];
+						break;
+				case 2:
+						set .@Getitem,.@itemID[2];
+						set .@GetitemName$,.@itemname$[2];
+						break;
+				case 3:
+						set .@Getitem,.@itemID[3];
+						set .@GetitemName$,.@itemname$[3];
+						break;
+				case 4:
+						set .@Getitem,.@itemID[4];
+						set .@GetitemName$,.@itemname$[4];
+						break;
+	}
+	next;
+	mes "[Aliz]";
+	mes "ท่านต้องการแลก ^FF0000"+.@GetitemName$+"^000000";
+	mes "ด้วยราคา ^0000FF500^000000 เหรียญ ใช่หรือไม่";
+	if(select("^0000ffขอคิดแป๊ป^000000:^ff0000แน่นอน^000000") == 1) {
+			next;
+			mes "[Aliz]";
+			mes "กลับมาใหม่เมื่อท่านพร้อม";
+			close;
+		} else {
+			delitem 7929,500; //dell
+			getitem .@Getitem,1;
+			mes "ขอบคุณที่ใช้บริการค่ะ";
+			close;
+		}
+
+Lrandom:
+	mes "ท่านเลือก: ^FF0000แลกแบบสุ่ม^000000";
+	mes "ต้องใช้ ^0000FF250^000000 เหรียญ";
+	if(@Gold_coin < 250) goto Lnocoin;
+	next;
+	mes "[Aliz]";
+	mes "เริ่มทำการสุ่มเลยมั๊ย? ";
+	if(select("^0000ffขอคิดแป๊ป^000000:^ff0000ลุยเลย^000000") == 1) {
+			next;
+			mes "[Aliz]";
+			mes "กลับมาใหม่เมื่อท่านพร้อม";
+			close;
+		} else {
+			next;
+			set @r,rand(1,4);
+			set .@Getitem,.@itemID[@r];
+			delitem 7929,250; //dell
+			getitem .@Getitem,1;
+			mes "[Aliz]";
+			mes "ขอบคุณที่ใช้บริการค่ะ";
+			close;
+		}
+Lend:
+	next;
+	mes "[Aliz]";
+	mes "ขอให้ท่านโชคดี";
+	close;
+Lnocoin:
+	next;
+	mes "[Aliz]";
+	mes "ท่านมีเหรียญไม่พอ";
+	mes "กรุณากลับมาใหม่เมื่อท่านพร้อม";
+	close;
+}

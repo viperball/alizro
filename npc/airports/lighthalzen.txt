@@ -1,0 +1,74 @@
+//===== rAthena Script ======================================= 
+//= Lighthalzen Airport Staff
+//===== By: ================================================== 
+//= L0ne_W0lf, Muad_Dib
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Lighthalzen Airport Staff
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+lhz_airport,143,43,5	script	Airport Staff#lhz_air1a::lhz_airport1	90,{
+	mes "[Airport Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Lighthalzen";
+	mes "เราไม่เคยหยุดบินเพื่อที่จะไปยัง Einbroch, Juno และ Hugel";
+	next;
+	if (select("ขึ้นยานเหาะ:ยกเลิก") == 1) {
+		mes "[พนักงานท่ายานเหาะ]";
+		mes "ยานเหาะมีค่าใช้จ่าย 1,200 zeny แต่ถ้าคุณมีตั๋วฟรีสำหรับยานเหาะ";
+		mes "ก็จะไม่มีค่าใช้จ่าย";
+		mes "ท่านจะขึ้นเรือเหาะหรือไม่?";
+		next;
+		if (select("ใช่:ไม่ใช่") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "lhz_airport",148,51;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "lhz_airport",148,51;
+				end;
+			}
+			mes "[Airship Staff]";
+			mes "ข้าขอโทษนะ แต่ท่านไม่มี 1,200 zeny เพื่อเป็นค่าเดินทาง";
+			close;
+		}
+	}
+	mes "[Airport Staff]";
+	mes "ขอบคุณท่านมาก ๆ โปรดมาใช้บริการของพวกเราใหม่ ขอให้โชคดี~";
+	close;
+}
+
+lhz_airport,158,43,5	duplicate(lhz_airport1)	Airship Staff#lhz_air1b	90
+lhz_airport,126,43,5	duplicate(lhz_airport1)	Airship Staff#lhz_air1c	90
+
+lhz_airport,143,49,3	script	Arrival Staff#lhz_air2a::lhz_airport2	90,{
+	mes "[Arrival Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Lighthalzen";
+	mes "โปรดให้ข้าแนะนำท่านเกี่ยวกับสถานีหลักถ้าท่านเพิ่งลงมาจากยานเหาะ อย่างไรก็ตามโปรด";
+	mes "ลงไปเมื่อถึงจุดหมายปลายทางของท่านแล้ว";
+	next;
+	if (select("ลงไปยังสถานีหลัก:ยกเลิก") == 1) {
+		mes "[พนักงานต้อนรับ]";
+		mes "เมื่อท่านมาถึงสถานีหลักแล้ว ท่านจะต้องจ่ายค่าธรรมเนียมอีกครั้งเพื่อขึ้นไปยังยานเหาะ";
+		mes "ท่านควรจะลงเมื่อ Lighthalzen เป็นจุดหมายปลายทางของท่าน";
+		mes "ไปยังสถานีหลักเลยมั้ย?";
+		next;
+		if (select("ไป:ไม่ไป") == 1) {
+			warp "lhz_airport",142,40;
+			end;
+		}
+	}
+	mes "[Arrival Staff]";
+	mes "โอเค ขอบคุณสำหรับการอุดหนุนบริการยานเหาะของเรา";
+	mes "และขอให้ท่านเดินทางโดยสวัสดิภาพ~";
+	close;
+}
+
+lhz_airport,126,51,3	duplicate(lhz_airport2)	Arrival Staff#lhz_air2b	90
+lhz_airport,158,50,3	duplicate(lhz_airport2)	Arrival Staff#lhz_air2c	90

@@ -1,0 +1,110 @@
+-	script	PvP Warper	-1,{
+mes "[ ^ff0000PVP Warper^000000 ]";
+mes "ท่านต้องการไปประลองฝีมือที่ PvP Arena?";
+menu "แน่นนอน!",L_Yes,"ยังก่อนข้าไม่พร้อม",L_No;
+
+L_Yes:
+next;
+mes "[ ^ff0000PVP Warper^000000 ]";
+mes "ไป PvP Arena ไหนดี?";
+menu	"PVP Arena [ Ancient - Nightmare ] [" + getmapusers("force_4-1.gat") + " / 20]",L1,
+	"PvP Arena [ Ancient - Normal ] [" + getmapusers("guild_vs3.gat") + " / 20]",L2,
+	"PvP Arena [ No - Yggdrasil Berry ] [" + getmapusers("guild_vs4.gat") + " / 20]",L3;
+
+L1:
+if (getmapusers("force_4-1.gat") >= 20) goto Lsorry;
+warp "force_4-1",103,104;
+close;
+
+L2:
+if (getmapusers("guild_vs3.gat") >= 20) goto Lsorry;
+warp "guild_vs3",0,0;
+close;
+
+L3:
+if (getmapusers("guild_vs4.gat") >= 20) goto Lsorry;
+if(countitem(607)) goto Lsorry2;
+warp "guild_vs4",0,0;
+close;
+
+Lsorry:
+next;
+mes "[ ^ff0000PVP Warper^000000 ]";
+mes "ข้าว่าลานประลองนี้เต็มแล้ว";
+mes "ท่านไม่ลองเลือกที่อื่นดูล่ะ";
+close;
+
+Lsorry2:
+next;
+mes "[ ^ff0000PVP Warper^000000 ]";
+mes "คุณไม่สามารถนำ "+getitemname(607)+" เข้าลานประลอง";
+close;
+
+L_No:
+close;
+}
+
+prontera,146,106,5	duplicate(PvP Warper)	PvP Warper#prt	843
+morocc,122,57,5	duplicate(PvP Warper)	PvP Warper#moc	843
+geffen,131,72,5	duplicate(PvP Warper)	PvP Warper#gef	843
+
+// Mapflags
+force_4-1	mapflag	pvp
+//guild_vs3	mapflag	pvp
+//guild_vs4	mapflag	pvp
+
+ 
+
+force_4-1	mapflag	nocommand	99
+force_4-1	mapflag	nosave	SavePoint
+force_4-1	mapflag	noteleport
+force_4-1	mapflag	nowarp
+force_4-1	mapflag	nowarpto
+force_4-1	mapflag	nomemo
+force_4-1	mapflag	notrade
+force_4-1	mapflag	noreturn
+force_4-1	mapflag	nobranch
+
+guild_vs3	mapflag	nocommand	99
+guild_vs3	mapflag	nosave	SavePoint
+guild_vs3	mapflag	noteleport
+guild_vs3	mapflag	nowarp
+guild_vs3	mapflag	nowarpto
+guild_vs3	mapflag	nomemo
+guild_vs3	mapflag	notrade
+guild_vs3	mapflag	noreturn
+guild_vs3	mapflag	nobranch
+
+guild_vs4	mapflag	nocommand	99
+guild_vs4	mapflag	nosave	SavePoint
+guild_vs4	mapflag	noteleport
+guild_vs4	mapflag	nowarp
+guild_vs4	mapflag	nowarpto
+guild_vs4	mapflag	nomemo
+guild_vs4	mapflag	notrade
+guild_vs4	mapflag	noreturn
+guild_vs4	mapflag	nobranch
+
+
+-	script	Healer	-1,{
+end;
+OnPCKillEvent:
+if(strcharinfo(3)=="guild_vs4"){
+	percentheal 100,100;
+	specialeffect 312;
+	skilleffect 28,32767;
+	sc_end SC_STONE;
+	sc_end SC_FREEZE;
+	sc_end SC_STUN;
+	sc_end SC_SLEEP;
+	sc_end SC_POISON;
+	sc_end SC_CURSE;
+	sc_end SC_SILENCE;
+	sc_end SC_CONFUSION;
+	sc_end SC_BLIND;
+	sc_end SC_BLEEDING;
+	sc_end SC_DPOISON;
+	dispbottom "HP/SP fully restored.";
+}
+end;
+}

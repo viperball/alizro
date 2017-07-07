@@ -1,0 +1,239 @@
+//===== rAthena Script =======================================================
+//= Hunter Dead Branch
+//===== By: ==================================================================
+//= คิดโดย && เทส โดย: sctnightcore
+//= สคริปโดย: naLizn+
+//===== Current Version: =====================================================
+//= 1.0
+//===== Compatible With: =====================================================
+//= eAthena, rAthena
+//===== Description: =========================================================
+//= พนันทายชื่อมอนสเตอร์เป็นตัวอักษร จากการเรียกของ NPC
+//===== แหล่งสนทนา ===============================================================
+//= https://discordapp.com/channels/243351250077220864/243351250077220864 ====
+//============================================================================
+
+-	script	HunterGameSetter	-1,{
+OnInit:
+	set .Time,0;  // เวลาที่จะทำการหักไม้ อัตโนมัติ เป็นนาที  ,  ถ้าใส่ 0 จะหักต่อเมื่อมีคนแทงครบ 3 อัน
+	set $@HunterGamePlaying,0;
+	set $@HunterGameCost,5000;
+	set $@HGC_GetPoint,2;
+	setarray $@MonsterID[0],1094,2293,1018,1572,1033,1007,1391,2291,1029,1926,1070,1726,1055,1061,1044,1002,2220,1012,1165,1175,1883,1066,1927,2210,1057,1177;
+	set $@x,0;
+	donpcevent "HunterGame::OnResetRoom";
+	
+	if(.Time>0) {
+		while( 1 ){
+			donpcevent "HunterGame::OnGamePlaying";
+			sleep ( .Time * 60000 );
+		}
+	}
+	
+end;
+}
+
+//-------------- คนรับแทง-------------------------------
+prontera,237,69,4	script	HunterGame	64,{
+PLZ_Main:
+
+	getmapxy(.@map$,$@x,$@y,0);
+	
+	if($@HunterGameRunning==1){
+	mes "^FF0000[ HuterGame ]^000000";
+	mes "- ตอนนี้เกมกำลังเล่นอยู่";
+	mes "- กรุณารอสักหน่อยนะ";
+	close;
+	end;
+	}
+	if(getd("HGC_Coin1")>0){
+		if(getd("HuterGameRound1")==$HuterGameRound-1&&$HGC_Win==1){
+			set .@HGC_Temp,getd("HGC_Coin1")*$@HGC_GetPoint;
+			set Zeny,(Zeny + .@HGC_Temp);
+			setd "HGC_Coin1",0;
+			mes "^FF0000[ HuterGame ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+.@HGC_Temp+" zeny^000000";
+			next;
+		}
+	}
+	
+	if(getd("HGC_Coin2")>0){
+		if(getd("HuterGameRound2")==$HuterGameRound-1&&$HGC_Win==2){
+			set .@HGC_Temp,getd("HGC_Coin2")*$@HGC_GetPoint;
+			set Zeny,(Zeny + .@HGC_Temp);
+			setd "HGC_Coin2",0;
+			mes "^FF0000[ HuterGame ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+.@HGC_Temp+" zeny^000000";
+			next;
+		}
+	}
+	
+	if(getd("HGC_Coin3")>0){
+		if(getd("HuterGameRound3")==$HuterGameRound-1&&$HGC_Win==3){
+			set .@HGC_Temp,getd("HGC_Coin3")*$@HGC_GetPoint;
+			set Zeny,(Zeny + .@HGC_Temp);
+			setd "HGC_Coin3",0;
+			mes "^FF0000[ HuterGame ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+.@HGC_Temp+" zeny^000000";
+			next;
+		}
+	}
+	
+	mes "^FF0000[ HunterGame ]^000000";
+	mes "หาไรหนุกๆ ทำกันมั๊ยท่าน";
+	mes "ข้าว่าจะหักไม้ผี สักอัน";
+	mes "แต่ว่าหักเฉยๆมันคงจะดูธรรมดาไป";
+	mes "ลองมาพนันกันหน่อยมั๊ยว่า ตัวอะไรจะออกมา";
+	next;
+	menu "ต่ำ - [A-I]",L_LOW,"กลาง - [J-R]",L_MID,"สูง - [S-Z]",L_HIGH,"ไม่เอาดีกว่า",L_3;
+	L_LOW:
+		callfunc("SelectLEN",1);
+		close;
+		end;
+	L_MID:
+		callfunc("SelectLEN",2);
+		close;
+		end;
+	L_HIGH:
+		callfunc("SelectLEN",3);
+		close;
+		end;
+	L_3:
+		mes "^FF0000[ HunterGame ]^000000";
+		mes "ไม่ว่ากัน โชดดีนะ";
+		close;
+		end;
+		
+OnGamePlaying:
+		announce "[ HuterGame ] : อีก 1 นาทีจะทำการหักไม้ผีแล้ว",8;
+	sleep2 10000;
+		announce "[ HuterGame ] : ท่านใดยังไม่ได้พนันรีบๆเข้านะ",8;
+	sleep2 10000;
+		announce "[ HuterGame ] : ท่านใดยังไม่ได้พนันรีบแทงเข้าหล่ะ มีเวลาอีก 40 วินาที",8;
+	sleep2 10000;
+		announce "[ HuterGame ] : ตอนนี้เหลือเวลาอีกเพียง 30 วินาทีแล้ว",8;
+	sleep2 10000;
+		announce "[ HuterGame ] : เหลือเวลาอีก 20 วินาทีสุดท้าย",8;
+	sleep2 10000;
+		announce "[ HuterGame ] : ข้าจะนับถอยหลัง 10 วินาที",8; 	
+	sleep2 1000;announce "[ HuterGame ] : 9",8;
+	sleep2 1000;announce "[ HuterGame ] : 8",8;
+	sleep2 1000;announce "[ HuterGame ] : 7",8;
+	sleep2 1000;announce "[ HuterGame ] : 6",8;
+	sleep2 1000;announce "[ HuterGame ] : 5",8;
+	sleep2 1000;announce "[ HuterGame ] : 4",8;
+	sleep2 1000;announce "[ HuterGame ] : 3",8;
+	sleep2 1000;announce "[ HuterGame ] : 2",8;
+	sleep2 1000;announce "[ HuterGame ] : 1",8;
+	sleep2 1000;announce "[ HuterGame ] : หักไม้ผี ณ บัดนี้",8; 
+	set $@HunterGameRunning,1;
+	set $HuterGameRound,$HuterGameRound+1;
+	set $@PoringGamePlaying,1;
+	set $@RAND,rand(0,25);
+	set $@Mod,$@MonsterID[$@RAND];
+	if($@x==0){
+		set $@x,237;
+		set $@y,66;
+	}
+	monster strnpcinfo(4),$@x,$@y,"--ja--",$@Mod,1,strnpcinfo(3)+"::OnMobDead";
+	
+	if ($@RAND==23)
+		announce "[ HuterGame ] : ฮะฮ่าา ข้าสุ่มได้ [Xmas Lunatic]",8;
+	else if ($@RAND==20)
+		announce "[ HuterGame ] : ฮะฮ่าา ข้าสุ่มได้ [Uzhas]",8; 
+	else
+		announce "[ HuterGame ] : ฮะฮ่าา ข้าสุ่มได้ ["+strmobinfo(1,$@Mod)+"]",8;
+
+		delwaitingroom "HunterGame";
+		sleep2 1000;
+		npcskilleffect 85,10,$@x,$@y;
+		sleep2 2000; 
+		killmonster "prontera",strnpcinfo(3)+"::OnMobDead";
+		sleep2 2000;
+
+	if($@RAND > 17 ){
+		set $HGC_Win,3;
+		set $@WIN$,"สูง";
+	} else if($@RAND > 8 ){
+		set $HGC_Win,2;
+		set $@WIN$,"กลาง";
+	} else {
+		set $HGC_Win,1;
+		set $@WIN$,"ต่ำ";
+	}
+	sleep2 1000;
+		announce "[ HuterGame ] : ท่านใด้ทาย ["+$@WIN$+"] ติดต่อเพื่อรับรางวัลด้วย",8; 
+	set $@HunterGamePlaying,0;
+	set $@HunterGameRunning,0;
+	donpcevent "HunterGame::OnResetRoom";
+end;
+
+OnResetRoom:
+	delwaitingroom "HunterGame";
+	set $HGC_Player1,0;
+	set $HGC_Player2,0;
+	set $HGC_Player3,0;
+	waitingroom "คนแทง ต่ำ[0] กลาง[0] สูง[0]",0;
+	end;
+	
+OnSetRoom:
+	delwaitingroom "HunterGame";
+	waitingroom "คนแทง ต่ำ["+getd("$HGC_Player1")+"] กลาง["+getd("$HGC_Player2")+"] สูง["+getd("$HGC_Player3")+"]",0;
+end;
+OnMobDead:
+	end;
+}
+
+
+function	script	SelectLEN	{
+	if($@HunterGameRunning==1){
+		mes "^FF0000[ HunterGame ]^000000";
+		mes "- รอบนี้เกมได้เริ่มต้นขึ้นแล้ว";
+		mes "- กรุณารอสักหน่อยนะ";
+		close;
+		end;
+	}
+	set .@HGC_LENT,getarg(0);
+	mes "^FF0000[ HunterGame ]^000000";
+	mes "- แทง 1 zeny ได้คืน ^0000FF"+$@HGC_GetPoint+" zeny^000000";
+	
+	if(getd("HGC_Coin"+.@HGC_LENT)!=0&&getd("HuterGameRound"+.@HGC_LENT)==$HuterGameRound){
+		mes "- ท่านแทงตัวนี้ไว้แล้ว [ ^AA3333"+getd("HGC_Coin"+.@HGC_LENT)+"^000000 ]";
+		mes "- ท่านไม่สามารถแทงได้อีก";
+		close;
+	}
+	mes "- ท่านยัง^FF0000ไม่ได้^000000แทงตัวนี้";
+	next;
+	set .@HGC_Input,$@HunterGameCost;
+	mes "^FF0000[ HunterGame ]^000000";
+	mes "- ท่านยืนยันจะแทงจำนวน [ ^2244BB"+.@HGC_Input+"^000000 ] ใช่มั้ย";
+	next;
+	if(select("- ถูกต้อง","- ช้าก่อนข้าขอคิดใหม่")==2)
+	close;
+	if(Zeny < .@HGC_Input){
+		mes "^FF0000[ HunterGame ]^000000";
+		mes "- ท่านมี zeny ไม่พอ";
+		mes "- ไปหาซื้อให้พอก่อน";
+		close;
+		return;
+	}
+	if(.@HGC_Input==0){
+		mes "^FF0000[ HunterGame ]^000000";
+		mes "- กรุณาแทงอย่างต่ำที่สุด ^0000FF"+$@HunterGameCost+"^000000 zeny";
+		close;
+		return;
+	}
+	set Zeny,(Zeny - .@HGC_Input);
+	setd "HGC_Coin"+.@HGC_LENT,.@HGC_Input;
+	setd "$HGC_Player"+.@HGC_LENT,getd("$HGC_Player"+.@HGC_LENT)+1;
+	setd "HuterGameRound"+.@HGC_LENT,$HuterGameRound;
+	donpcevent "HunterGame::OnSetRoom";
+	mes "^FF0000[ HunterGame ]^000000";
+	mes "- ข้ารับแทงไว้เรียบร้อยแล้ว";
+	if(.Time==0 && getd("$HGC_Player1")>0 && getd("$HGC_Player2")>0 && getd("$HGC_Player3")>0){
+		donpcevent "HunterGame::OnGamePlaying";
+	}
+	close;
+	return;
+}
+		

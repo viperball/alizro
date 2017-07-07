@@ -1,0 +1,78 @@
+//v1.4
+new_1-2,95,71,4	script	Bling	100,{
+//Character Variables
+	set .@geid,	getequipid(5);
+	set .@cout,	countitem(.item);
+	set .@gin$,	getitemname(.item);
+	set .@gerf,	getequiprefinerycnt(5);
+	set .@crd1,	getequipcardid(5,0);
+	set .@crd2,	getequipcardid(5,1);
+	set .@crd3,	getequipcardid(5,2);
+	set .@crd4,	getequipcardid(5,3);
+	set .@itm,	4700+((rand(5)*10)+rand(3));
+	set .@chance, 10;
+	mes .npc$;
+	mes "I can endow your glasses with mystical powers, but It'll cost yah "+.pric+" "+((.pric-1)?.@gin$+"s":.@gin$)+"."; 
+	next;
+	if(!.@cout) { 
+		mes .npc$; mes "Sorry come back when you have "+.@gin$+"(s)."; 
+		close; 
+	}
+	
+	if(select("Yes:No")&2) { 
+		mes .npc$; 
+		mes "Alright, thanks anyways!"; 
+		close; 
+	}
+	if(.@cout<.pric) { 
+		mes .npc$; 
+		mes "I'm sorry you don't have enough "+.@gin$+"(s) to for me to endow your specticals, please come back later."; 
+		close; 
+	}
+	if((rand(0,100) > .@chance)) { 
+		specialeffect2 306;
+		emotion e_sob,0; 
+		next;
+		mes .npc$; 
+		mes "โอ๊!! ขอโทษที ข้าทำมันพลาด"; 
+		delitem .item,.pric;
+		delitem .@geid,1;
+		getitem2 .@geid, 1, 1, .@gerf, 0, .@crd1, .@crd2, .@crd3, .@crd4;
+		close; 
+	}
+	
+	if(compare(.uit$,""+.@geid)) {
+		specialeffect2 305;
+		emotion e_no1,0;
+		next;
+		//delitem .item,.pric;
+		//delitem2 .@geid, 1, 1, .@gerf, 0, .@crd1, .@crd2, .@crd3, .@crd4;
+		//getitem2 .@geid, 1, 1, .@gerf, 0, .@crd1, .@crd2, .@crd3, .@itm;
+		mes .npc$;
+		mes "ฮะฮ่า!!!!  นี่แหละที่เค้าเรียกว่ายอดฝีมือ";
+		//equip .@geid;
+		close;
+	}
+	
+	else
+		{
+			mes .npc$;
+			mes "I'm sorry but you need to equipped a slotted mid-range headgear before we can continue.";
+		}
+	close;
+	
+//NPC Constants
+	OnInit:
+		//=-=-=-=-=-=-=Configuration=-=-=-=-=-=-=
+		set .npc$,	"[^0000FFBlinger^000000]";			// NPC Name
+		set .pric,	1;						// Price
+		set .efet,	154;						// Effect Number
+		set .item,	6242;						// Item Number
+		set .uit$,	"5074,5401,5104,18507,5068,2204,2260,5085,2202";// Item List
+		set .perc,	rand(50,80); // Percent
+		/*18603(Black Devil Mask), Not included because it wasn't in my DB*/ 
+		/*2286 Unslotted version of 18507*/
+		/*2203 Unslotted version of 2204*/
+		/*2201 Unslotted version of 2202*/
+		//=-=-=-=-=-=-=-=-Skorm-=-=-=-=-=-=-=-=-=
+}

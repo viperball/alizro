@@ -1,0 +1,205 @@
+prontera,146,164,1	script	Stylist#cstom	122,{
+	mes "[Super Stylist]";
+	mes "เบื่อสไตล์เดิมๆหรือยัง?";
+	mes "มาลองเปลี่ยนอะไรใหม่ๆ มั๊ย";
+	next;
+Lintro:
+	if (BaseClass != Job_Summoner){
+		if (Class>=4054 && Class<=4079&&vip_status(1))
+			menu "ทรงผม",Lhairstyle,"สีผม",Lhaircolor,"สีชุด",Lclothcolor,"แบบชุด",Lbodystyle,"ห้องลอง",Ldressroom;
+		else 
+			menu "ทรงผม",Lhairstyle,"สีผม",Lhaircolor,"สีชุด",Lclothcolor,"ห้องลอง",Ldressroom;
+	}
+	else
+		{
+			menu "ทรงผม",Lhairstyle,"สีผม",Lhaircolor;
+		}
+	
+Ldressroom:
+	set @hairdyemax,251;
+	set @bodydyemax,35;
+	if (BaseClass != Job_Summoner)
+		set @hairstylemax,43;
+	else
+		set @hairstylemax,6;
+		if (
+//Job_Rune_Knight
+//	Class == 4054 || 
+//	Class == 4060 || 
+//Job_Warlock
+	Class == 4055 ||
+	Class == 4061 || 
+//Job_Ranger
+	Class == 4056 || 
+	Class == 4062 || 
+//Job_Arch_Bishop
+	Class == 4057 || 
+	Class == 4063 || 
+//Job_Mechanic
+	Class == 4058 || 
+	Class == 4064 || 
+//Job_Guillotine_Cross
+	Class == 4059 || 
+	Class == 4065 || 
+//Job_Royal_Guard
+	Class == 4066 || 
+	Class == 4073 || 
+//Job_Sorcerer
+//	Class == 4067 || 
+//	Class == 4074 || 
+//Job_Minstrel
+	Class == 4068 || 
+	Class == 4075 || 
+//Job_Wanderer	
+	Class == 4069 || 
+	Class == 4076 || 
+//Job_Sura
+//	Class == 4070 || 
+//	Class == 4077 || 
+//Job_Genetic
+	Class == 4071 || 
+	Class == 4078 || 
+//Job_Shadow_Chaser
+	Class == 4072 ||
+	Class == 4079  
+	)
+		set @bodystylemax,1;
+	else
+		set @bodystylemax,0;
+	
+	mes "[Super Stylist]";
+	mes "เราจะเปิดห้องให้ท่าน";
+	mes "ทดลองเปลี่ยน แต่การเปลี่ยนนี้";
+	mes "จะไม่ส่งผลใดๆต่อตัวละคร";
+	next;
+	mes "[Super Stylist]";
+	mes "เราเพียงต้องการให้ท่านจำ";
+	mes "ค่าสีต่างๆ เพื่อใช้ในการเปลี่ยนจริง";
+	mes "กด next เปิดห้องแต่งตัว";
+	next;
+	opendressroom(0);
+	close;
+Lclothcolor:
+	set .@Style,7;
+	set .@StyleMax,35;
+	set .@Revert, (getlook(7)+1);
+	set .@SaveStyle$,"clothes_color";
+	goto Lmain;
+Lhairstyle:
+	set .@Style,1;
+	set .@Revert, getlook(1);
+	set .@SaveStyle$,"hair";
+	if (BaseClass != Job_Summoner)
+		set .@StyleMax,43;		
+	else
+		set .@StyleMax,6;
+	
+	goto Lmain;
+Lhaircolor:
+	set .@Revert, getlook(6);
+	set .@SaveStyle$,"hair_color";
+	set .@Style,6;
+	if (BaseClass != Job_Summoner)
+		set .@StyleMax,251;
+	else
+		set .@StyleMax,8;
+	
+	goto Lmain;
+Lbodystyle:
+	if (VIP_SCRIPT && vip_status(VIP_STATUS_ACTIVE)){
+		mes "[Super Stylist]";
+		mes "บริการนี้สำหรับ สมาชิก VIP เท่านั้น";
+		mes "โปรดเลือกรายการอื่น";
+		goto Lintro;
+	}
+else {
+	set .@Revert, (getlook(13)+1);
+	set .@Style,13;
+	set .@SaveStyle$,"body";
+		if (
+//Job_Rune_Knight
+//	Class == 4054 || 
+//	Class == 4060 || 
+//Job_Warlock
+	Class == 4055 ||
+	Class == 4061 || 
+//Job_Ranger
+	Class == 4056 || 
+	Class == 4062 || 
+//Job_Arch_Bishop
+	Class == 4057 || 
+	Class == 4063 || 
+//Job_Mechanic
+	Class == 4058 || 
+	Class == 4064 || 
+//Job_Guillotine_Cross
+	Class == 4059 || 
+	Class == 4065 || 
+//Job_Royal_Guard
+	Class == 4066 || 
+	Class == 4073 || 
+//Job_Sorcerer
+//	Class == 4067 || 
+//	Class == 4074 || 
+//Job_Minstrel
+	Class == 4068 || 
+	Class == 4075 || 
+//Job_Wanderer	
+	Class == 4069 || 
+	Class == 4076 || 
+//Job_Sura
+//	Class == 4070 || 
+//	Class == 4077 || 
+//Job_Genetic
+	Class == 4071 || 
+	Class == 4078 || 
+//Job_Shadow_Chaser
+	Class == 4072 ||
+	Class == 4079  
+	)
+		set .@StyleMax,2;
+	else
+		{
+			set .@StyleMax,0;
+			mes "[Super Stylist]";
+			mes "อาชีพนี้ยังไม่มีชุดเพิ่ม";
+			mes "โปรดเลือกรายการอื่น";
+			goto Lintro;
+		}
+		
+	}
+Lmain:
+	set .@CurentStyle,.@Revert;
+	while(1) {
+		if(.@Style==13 || .@Style==7 ) {
+				setlook .@Style,(.@CurentStyle-1);
+				query_sql( "UPDATE `char` SET `"+(.@SaveStyle$)+"` = '"+(.@CurentStyle-1)+"' WHERE `char`.`char_id` = "+getcharid(0) );					
+				
+			}
+		else {
+				setlook .@Style,.@CurentStyle;
+				query_sql( "UPDATE `char` SET `"+(.@SaveStyle$)+"` = '"+(.@CurentStyle)+"' WHERE `char`.`char_id` = "+getcharid(0) );
+			}
+		set .@menu$, " ~ ไปต่อ (^0055FF"+((.@CurentStyle != .@StyleMax)?.@CurentStyle+1:1)+"^000000) : ~ ย้อนกลับ (^0055FF"+((.@CurentStyle != 1)?.@CurentStyle-1:.@StyleMax)+"^000000) : ~ ไปที่รหัส... : ~ แบบเดิม (^0055FF"+.@Revert+"^000000) : ~ เมนูหลัก";
+		switch(select(.@menu$)) {
+			case 1:
+				set .@CurentStyle, ((.@CurentStyle != .@StyleMax)?.@CurentStyle+1:1);
+				break;
+			case 2:
+				set .@CurentStyle, ((.@CurentStyle != 1)?.@CurentStyle-1:.@StyleMax);
+				break;
+			case 3:
+				message strcharinfo(0),"ใส่ค่าระหว่าง 1 - "+.@StyleMax;
+				input .@CurentStyle,0,.@StyleMax;
+				if (!.@CurentStyle)
+					set .@CurentStyle, rand(1,.@StyleMax);
+				break;
+			case 4:
+				set .@CurentStyle,.@Revert;
+				break;
+			case 5:
+				goto Lintro;
+				break;
+			}
+		}
+}

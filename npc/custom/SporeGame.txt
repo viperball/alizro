@@ -1,0 +1,257 @@
+//made by naLizn+#7286
+//Discord KRO & SSRO 
+//https://discord.gg/A3enCF8
+// version 2.0
+
+-	script	GameStart	-1,{
+OnInit:
+set $@Time,0;		// Announce every x Minute.	
+set $@FSC_GetPoint,2;		// อัตราคูณถ้าชนะ  
+set $@PoringGamePlaying,0;
+set $@PoringGameRunning,0;
+set $@GameZeny,1000000; //  ราคา ต่อรอบ
+set $@FSC_TAX,100000; // หัก 
+setarray	$SX,231,244;
+setarray	$SY,65,65;
+
+donpcevent "Spore#01::OnResetRoom";
+donpcevent "Spore#02::OnResetRoom";
+
+if ($@Time >0){
+	while( 1 ){
+		donpcevent "กรรมการเห็ด::OnGamePlaying";
+		sleep ( .Time * 60000 );
+		}
+}
+end;
+}
+
+//-------------- คนรับแทง-------------------------------
+prontera,237,69,4	script	กรรมการเห็ด	804,{
+PLZ_Main:
+	if($@PoringSlotsRunning==1){
+		mes "^FF0000[ กรรมการเห็ด ]^000000";
+		mes "- ตอนนี้กำลังดำเนินการหมุน";
+		mes "- กรุณารอสักหน่อยนะ";
+		close;
+    end;
+	} else {
+	if($@PoringGamePlaying==0 && getd("FSC_Coin1")>0){
+		if(getd("PoringGameRound1")==$PoringGameRound-1&&$FSC_Win==1){
+			set .@FSC_Temp,(getd("FSC_Coin1")*$@FSC_GetPoint)-$@FSC_TAX;
+			set Zeny,(Zeny + .@FSC_Temp);
+			setd "FSC_Coin1",0;
+			mes "^FF0000[ กรรมการเห็ด ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+.@FSC_Temp+" zeny^000000";
+			next;
+		}
+	}
+	
+	if($@PoringGamePlaying==0 && getd("FSC_Coin2")>0){
+        if(getd("PoringGameRound2")==$PoringGameRound-1&&$FSC_Win==2){
+			set .@FSC_Temp,(getd("FSC_Coin2")*$@FSC_GetPoint)-$@FSC_TAX;
+			set Zeny,(Zeny + .@FSC_Temp);
+			setd "FSC_Coin2",0;
+			mes "^FF0000[ กรรมการเห็ด ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+.@FSC_Temp+" zeny^000000";			
+			next;
+		}
+	}
+	
+	mes "^FF0000[ กรรมการเห็ด  ]^000000";
+	mes "เจ้าเห็ดแดง กับเห็ดดำ";
+	mes "มันชอบตีกันซะจริงๆ";
+	mes "แต่ข้าก็ชอบดูมันตีกันจริง";
+	mes "ว่าแต่ท่านจะมาพนันกะข้าหน่อยมั๊ย";
+	mes "ว่าตัวไหนมันจะชนะ";
+	next;
+	menu "^CC99FFเห็ดม่วง^000000",L_2,"^FF0000เห็ดเเดง^000000",L_1,"ไม่เอาดีกว่า",L_3;
+	L_1:
+		callfunc("SelectSpore",1);
+		close;
+		end;
+	L_2:
+		callfunc("SelectSpore",2);
+		close;
+		end;
+	L_3:
+		mes "^FF0000[ กรรมการเห็ด  ]^000000";
+		mes "ชอบดูอย่างเดียวละซินะ";
+		close;
+		end;
+	}
+OnGamePlaying:
+	set $@PoringGamePlaying,1;
+		announce "[ กรรมการเห็ด  ] : อีก 1 นาทีจะทำการเห็ดจะตีกันแล้ว",bc_map|bc_npc;
+	sleep 10000;
+		announce "[ กรรมการเห็ด  ] : ท่านใดยังไม่ได้พนันรีบๆเข้านะ",bc_map|bc_npc;
+	sleep 10000;
+		announce "[ กรรมการเห็ด  ] : ท่านใดยังไม่ได้พนันรีบแทงเข้าหล่ะ มีเวลาอีก 40 วินาที",bc_map|bc_npc;
+	sleep 10000;
+		announce "[ กรรมการเห็ด  ] : ตอนนี้เหลือเวลาอีกเพียง 30 วินาทีแล้ว",bc_map|bc_npc;
+	sleep 10000;
+		announce "[ กรรมการเห็ด  ] : เหลือเวลาอีก 20 วินาทีสุดท้าย",bc_map|bc_npc;
+	sleep 10000;
+		announce "[ กรรมการเห็ด  ] : ข้าจะนับถอยหลัง 10 วินาที",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 9",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 8",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 7",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 6",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 5",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 4",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 3",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 2",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : 1",bc_map|bc_npc;
+	sleep 1000;announce "[ กรรมการเห็ด  ] : เริ่มการเสี่ยงทาย ณ บัดนี้",bc_map|bc_npc; 
+	set $@PoringGameRunning,1;
+	set $@PlayGameTemp,rand(0,1);
+	set $PoringGameRound,$PoringGameRound+1;
+	set $@SpinSpeed,10;
+	set $@SpinRound,50;
+	set $@SC,0;
+	sleep 1000;
+		announce "[ กรรมการเห็ด  ] : หลังจากการต่อสู้โดยที่ตาเราดูไม่ทัน",bc_map|bc_npc; 
+	sleep 1000;
+	
+	for(set $@i,0;$@i<$@SpinRound;set $@i,$@i+1){
+		if($@SC==0) set $@SC,1;
+		else set $@SC,0;
+		movenpc "warp",$SX[$@SC],$SY[$@SC];
+		sleep $@SpinSpeed;
+		if ($@i==20) set $@SpinSpeed,$@SpinSpeed+100;
+		if ($@i==5) set $@SpinSpeed,$@SpinSpeed+500;
+	}
+	
+	if ($@PlayGameTemp){
+		set $FSC_Win,2;
+		announce "[ กรรมการเห็ด  ] : ผลปรากฎว่า.....[เห็ดม่วง]..... คือผู้ชนะ",bc_map|bc_npc; 
+		movenpc "warp",$SX[1],$SY[1];
+	}
+	else{
+		set $FSC_Win,1;
+		announce "[ กรรมการเห็ด  ] : ผลปรากฎว่า.....[เห็ดแดง].....คือผู้ชนะ",bc_map|bc_npc; 
+		movenpc "warp",$SX[0],$SY[0];
+	}
+	donpcevent "Spore#01::OnResetRoom";
+	donpcevent "Spore#02::OnResetRoom";
+	donpcevent "Spore#0"+$FSC_Win+"::OnEffect";
+end;
+
+OnInit:
+waitingroom "[พนันเห็ดม่วงแดง]",0;
+end;
+}
+
+function	script	SelectSpore	{
+	if($@PoringGameRunning==1){
+		mes "^FF0000[ กรรมการเห็ด ]^000000";
+		mes "- รอบนี้เกมได้เริ่มต้นขึ้นแล้ว";
+		mes "- กรุณารอสักหน่อยนะ";
+		close;
+		end;
+	}
+	set .@FSC_Spore,getarg(0);
+	mes "^FF0000[ กรรมการเห็ด ]^000000";
+	mes "- แทง 1 zeny ได้คืน ^0000FF"+.@FSC_GetPoint+" zeny^000000";
+	
+	if(getd("FSC_Coin"+.@FSC_Spore)!=0&&getd("PoringGameRound"+.@FSC_Spore)==$PoringGameRound){
+		mes "- ท่านแทงตัวนี้ไว้แล้ว [ ^AA3333"+getd("FSC_Coin"+.@FSC_Spore)+"^000000 ]";
+		mes "- ท่านไม่สามารถแทงได้อีก";
+		close;
+	}
+	mes "- ท่านยัง^FF0000ไม่ได้^000000แทงตัวนี้";
+	mes "- ตัวนี้ราคา ^FF0000" +$@GameZeny+"^000000 zeny";
+	next;
+	set .@FSC_Input,$@GameZeny;
+	
+L_Confrim:	
+	mes "^FF0000[ กรรมการเห็ด ]^000000";
+	mes "- ท่านยืนยันจะแทงจำนวน [ ^2244BB"+.@FSC_Input+"^000000 ] ใช่มั้ย";
+	next;
+	if(select("- ถูกต้อง","- ช้าก่อนข้าขอคิดใหม่")==2)
+	close;
+	if(Zeny < .@FSC_Input){
+		mes "^FF0000[ กรรมการเห็ด ]^000000";
+		mes "- ท่านมี zeny ไม่พอ";
+		mes "- ไปหาซื้อให้พอก่อน";
+		close;
+		return;
+	}
+	if(.@FSC_Input==0){
+		mes "^FF0000[ กรรมการเห็ด ]^000000";
+		mes "- กรุณาแทงอย่างต่ำที่สุด ^0000FF1^000000 zeny";
+		close;
+		return;
+	}
+	set Zeny,(Zeny - .@FSC_Input);
+	setd "FSC_Coin"+.@FSC_Spore,.@FSC_Input;
+	setd "$FSC_Coin"+.@FSC_Spore,getd("$FSC_Coin"+.@FSC_Spore)+.@FSC_Input;
+	setd "$FSC_Player"+.@FSC_Spore,getd("$FSC_Player"+.@FSC_Spore)+1;
+	
+	donpcevent "Spore#0"+.@FSC_Spore+"::OnSetRoom";
+	
+	setd "PoringGameRound"+.@FSC_Spore,$PoringGameRound;
+	mes "^FF0000[ กรรมการเห็ด ]^000000";
+	mes "- ข้ารับแทงไว้เรียบร้อยแล้ว";
+	if($FSC_Player1>0 && $FSC_Player2>0 && $@Time==0){
+		donpcevent "กรรมการเห็ด::OnGamePlaying";
+	}
+	close;
+	return;
+}
+		
+	
+//-------------- เห็ดแดง-----------------------------
+
+prontera,231,65,6	script	Spore#01	1014,{
+	end;
+OnEffect:
+	for(set $@FSC_i,1;$@FSC_i<15;set $@FSC_i,$@FSC_i+1){
+		specialeffect 68;
+		sleep 500;
+	}
+	set $@PoringGamePlaying,0;
+	set $@PoringGameRunning,0;
+	end;
+OnResetRoom:
+	delwaitingroom "Spore#01";
+	set $FSC_Coin1,0;
+	set $FSC_Player1,0;
+	waitingroom "คนแทง [ 0 ] รวม [ 0 ]",0;
+	
+	end;
+	
+OnSetRoom:
+	delwaitingroom "Spore#01";
+	waitingroom "คนแทง [ "+getd("$FSC_Player1")+" ] รวม [ "+getd("$FSC_Coin1")+" ]",0;
+	end;
+
+}
+
+//-------------- เห็ดดำ----------------------------
+
+prontera,244,65,4	script	Spore#02	1077,{
+	end;
+OnEffect:
+	for(set $@FSC_i,1;$@FSC_i<15;set $@FSC_i,$@FSC_i+1){
+		specialeffect 68;
+		sleep 500;
+	}
+	set $@PoringGamePlaying,0;
+	set $@PoringGameRunning,0;
+	end;
+OnResetRoom:
+	delwaitingroom "Spore#02";
+	set $FSC_Coin2,0;
+	set $FSC_Player2,0;
+	waitingroom "คนแทง [ 0 ] รวม [ 0 ]",0;
+	end;
+	
+OnSetRoom:
+	delwaitingroom "Spore#02";
+	waitingroom "คนแทง [ "+getd("$FSC_Player2")+" ] รวม [ "+getd("$FSC_Coin2")+" ]",0;
+	end;
+
+}
+
+prontera,231,65,0	script	warp	45,1,1,{}

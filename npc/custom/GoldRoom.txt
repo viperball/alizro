@@ -1,0 +1,151 @@
+//===== rAthena Script =======================================================
+//= Gold ROOM
+//===== By: ==================================================================
+//= Script: naLizn+
+//===== Current Version: =====================================================
+//= 1.0
+//===== Compatible With: =====================================================
+//= eAthena, rAthena
+//===== Description: =========================================================
+//=1 > if players enter the gold room the players need to pay 100k of zeny
+//=2 > pvp is on inside the gold room
+//=3 > if players died inside the gold room there points will be gone
+//=4 > each monster you kill inside the gold room players earned a random gold Points
+//=5 > they can exchange there gold point to items listed on the npc
+//=6 > skill is off also using fly wings and butterfly wings
+//=7 > there will be an npc at the center of the map to exit the gold room
+//===== Contact me ===========================================================
+//= https://discordapp.com/channels/243351250077220864/243351250077220864 ====
+//============================================================================
+-	script	GoldRoom_init	-1,{
+onInit:
+	set $@BattleMap$, "pvp_n_3-2";
+	set $@maxMemberCount, 10;
+	set $@EntryPrice, 100000;
+	setarray $@Ch_itemID[0],5597,5596,18746,18712; //item for exchange
+	setarray $@Ch_Cost[0],200,200,500,500; //Excange cost
+	setarray .mapflag, mf_nodrop,mf_nomemo, mf_noteleport, mf_nosave, mf_nobranch, mf_nowarp, mf_nowarpto, mf_noreturn, mf_noskill;
+	.size = getarraysize( .mapflag );
+	for ( .@i = 0; .@i < .size; .@i++ ){
+		setmapflag $@BattleMap$, .mapflag[.@i];
+	}
+	pvpon $@BattleMap$;
+end;
+}
+
+pvp_n_3-2,99,135,5	script	Gold Room Warper#pvp	920,{
+	mes "^FF7DFF[ Gold Room Warper ]^000000";
+	mes "You have: ^FF0000"+$GPOINTS+"^000000";
+	mes "Do you want to return to town?";
+	if(select("Yes,please","No,Give me more time")==2) {
+		mes "OK, take care then";
+		close;
+	}
+	set #GOLDPOINT, #GOLDPOINT+$GPOINTS;
+	warp "SavePoint",0,0;
+	end;
+OnNPCKillEvent:
+	  if (killedrid == 1979){
+		set $GPOINTS,$GPOINTS+rand(0,5);
+	  }
+	  if (killedrid == 1977 || killedrid == 1976){
+		set $GPOINTS,$GPOINTS+rand(0,1);
+	  }
+end;
+}
+prontera,164,174,3	script	Gold Room Warper#prt	920,{
+	mes "^FF7DFF[ Gold Room Warper ]^000000";
+	mes "Hey!! Wanna be rich?";
+	mes "I can bring you to the secert room";
+	mes "that you can get a lot of GoldPoint there.";
+	next;
+	mes "^FF7DFF[ Gold Room Warper ]^000000";
+	mes "However many people in this room seem crezy so you have to take care your self.";
+	mes "Because they can kill you any time and if you die in there";
+	mes "you will get nothing.";
+	next;
+	mes "^FF7DFF[ Gold Room Warper ]^000000";
+	mes "I can birng you there but it not for free.";
+	mes "You need to pay me for ^FF0000"+$@EntryPrice+"^000000 zeny";
+	next;
+	mes "^FF7DFF[ Gold Room Warper ]^000000";
+	mes "What do you need to do?";
+	menu "Bring me there",L_Goldroom,"Change Gold Point",L_ChangeGift,"Cancel",L_Cancel;
+
+L_Cancel:
+		mes "^FF7DFF[ Gold Room Warper ]^000000";
+		mes "OK, Bye~~";
+		close;
+		
+L_Goldroom:
+	if(.@Member>=$@maxMemberCount){
+		next;
+		mes "^FF7DFF[ Gold Room Warper ]^000000";
+		mes "Sorry, map is full now.";
+		mes "please wait a moment then talk to me again.";
+		close;
+	} else {
+		if(Zeny < $@EntryPrice) {
+			next;
+			mes "^FF7DFF[ Gold Room Warper ]^000000";
+			mes "Sorry, you don't have enough zeny";
+			mes "please come back to me again when you ready.";
+			close;
+		}
+		next;
+		set Zeny, Zeny-$@EntryPrice;
+		set .@Member, .@Member+1;
+		mes "^FF7DFF[ Gold Room Warper ]^000000";
+		mes "OK,Now get your money ^FF0000"+$@EntryPrice+"^000000 zeny";
+		mes "Let's go~~";
+		next;
+		set $GPOINTS, 0;
+		warp $@BattleMap$, 0, 0;
+		end;
+	}
+L_ChangeGift:
+		next;
+		mes "^FF7DFF[ Gold Room Warper ]^000000";
+		mes "You have: ^FF0000"+#GOLDPOINT+"^000000";
+		mes "Here is the list of avliable item for changing";
+		.size = getarraysize( $@Ch_itemID );
+		for ( .@i = 0; .@i < .size; .@i++ ){
+			set .@menu$,.@menu$+" ~"+getitemname($@Ch_itemID[.@i])+":";
+		}
+		set .@menu$, .@menu$+" ~Cancel";
+		set .@items, select(.@menu$)-1;
+		if(.@items ==(.size)){
+			next;
+			mes "^FF7DFF[ Gold Room Warper ]^000000";
+			mes "No worry~~";
+			close;
+		}
+		next;
+		mes "^FF7DFF[ Gold Room Warper ]^000000";
+		mes "You have selected ^FF0000"+getitemname($@Ch_itemID[.@items])+"^000000";
+		mes "This need ^FF0000"+($@Ch_Cost[.@items])+" GOLD POINTs^000000";
+		mes "Do you want to change?";
+		if(select("No:^FF0000Yes^000000")==1){
+			next;
+			mes "^FF7DFF[ Gold Room Warper ]^000000";
+			mes "OK,no problem";
+			close;
+			}
+		if(#GOLDPOINT<$@Ch_Cost[.@items]){
+			next;
+			mes "^FF7DFF[ Gold Room Warper ]^000000";
+			mes "You do not have enough GOLD POINTs";
+			mes "Please go to get more.";
+			close;
+		} else {
+			next;
+			set #GOLDPOINT,#GOLDPOINT-($@Ch_Cost[.@items]);
+			getitem $@Ch_itemID[.@items],1;
+			mes "^FF7DFF[ Gold Room Warper ]^000000";
+			mes "You got it, Thanks";
+		}
+		close;
+}
+pvp_n_3-2,0,0	monster	Zakudam	1979,20
+pvp_n_3-2,0,0	monster	Heavy Metaling	1977,10,5000
+pvp_n_3-2,0,0	monster	Cobalt Mineral	1976,15,5000

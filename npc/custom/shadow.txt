@@ -1,0 +1,77 @@
+prontera,247,86,5	script	Stalker Master	997,{
+	disable_items;
+	set .@price,100000;
+if( BaseJob== Job_Rogue || BaseJob== Job_Stalker || BaseJob==Job_Shadow_Chaser){	
+	mes "[Stalker Master]";
+	mes "ข้ามีสกิลมากมายให้ท่านได้เรียนรู้";
+	mes "สนใจจะลองดูสักหน่อยมั๊ยล่ะ ";
+	next;
+	if(Zeny < .@price) {
+	mes "[Stalker Master]";
+	mes "ข้าว่าท่าน";
+	mes "มี Zeny ไม่พอกับค่าเรียน";
+	mes "ค่าเรียนคือ ^FF0000"+.@price+"^000000";
+	mes "ลับไปหามาเพิ่มสักหน่อย ข้าจะรออยู่ที่นี่ทุกเวลา";
+	close;
+	}
+	if(select("น่าสนใจ:ไม่ดีกว่าข้ายังไม่พร้อม") == 2){
+		mes "["+ .@npc_name$ +"]";
+		mes "ได้เลย";
+		mes "กลับมาใหม่เเมื่อท่านพร้อม";			
+		close;
+	}
+	next;
+	mes "[Stalker Master]";
+	mes "แล้วท่านสนใจ Skill ไหนล่ะ?";
+	set .@SkillID,select( implode( .SkillName$,":" ) ) - 1;
+	mes "Selected "+.Skillname$[.@SkillID];
+	close2;
+	mes "[Stalker Master]";
+	mes "ท่านจะเรียน ^FF0000"+.SkillName$[.@SkillID]+"^000000";
+	mes "ค่าสอนคือ ^FF0000"+.@price+" zeny^000000 ตกลงมั๊ย?";
+	if(select("ข้าตกลง:ข้าหาหนทางอื่นดีกว่า") == 2){
+		mes "["+ .@npc_name$ +"]";
+		mes "ได้เลย";
+		mes "ขอให้ท่านโชคดี";			
+		close;
+	}
+	next;
+	mes "[Stalker Master]";
+	mes "ท่านอาจจะต้องเจ็บตัวสักหน่อยนะ";
+	mes "ส่วนความสำเร็จในการเรียนรู้ ";
+	mes "ขึ้นอยู่กับความสามารถของท่าน";
+	//next;
+	//mes "[Stalker Master]";
+	//mes "แต่ข้าจะทำให้มันง่ายขึ้นนิดนึง";
+	//mes "โดยทำให้ท่านมึนเมา และงงงวง ฮะฮ่า";
+	//sc_start SC_STUN,8000,10;
+	//sc_start SC_DECREASEAGI,8000,10;
+	//sc_start SC_FEAR,8000,10;
+	next;
+	if((.SkillID[.@SkillID]==85)||(.SkillID[.@SkillID]==83) || (.SkillID[.@SkillID]==89)){  //Ground
+		unitskillusepos getnpcid(0),.SkillID[.@SkillID],.SkillLV[.@SkillID],246,83;
+	}
+	else if(.SkillID[.@SkillID]==2204){ //Self
+		unitskilluseid getnpcid(0),.SkillID[.@SkillID],.SkillLV[.@SkillID];
+	}
+	else{
+		unitskilluseid getnpcid(0),.SkillID[.@SkillID],.SkillLV[.@SkillID],getcharid(3);
+	}
+	set Zeny, Zeny-.@price;
+	end;
+}
+else {
+	mes "[Stalker Master]";
+	mes "ข้าไม่มีอะไรจะสนทนากะท่าน";
+	mes "ลาก่อน...";
+}
+
+//unitskilluseid <GID>,<SkillID>,<SkillLevel>;
+//unitskillusepos <GID>,<SkillID>,<SkillLevel>,<x>,<y>;
+
+OnInit:
+setarray .SkillName$[0],"Asura Strike","Cold Bolt","Duple Light","Earth Spike","Fire Bolt","Lord of Vermillion","Meteor Storm","Jack Frost","Storm Gust","Water Ball";
+setarray .SkillID[0],271,14,2056,90,19,85,83,2204,89,86;
+setarray .SkillLV[0],5,10,10,10,10,10,10,5,10,5;
+end;
+}

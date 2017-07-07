@@ -1,0 +1,15 @@
+payon,90,115,5	script	MvP-Rank	757,{
+query_sql( "SELECT `name`,`Count` FROM `mvp_rank` ORDER BY `Count` DESC LIMIT 5",.@Name$,.@Count );
+if( getarraysize( .@Name$ ) ){
+	for( set .@i,0; .@i < getarraysize( .@Name$ ); set .@i,.@i + 1 )
+		mes "[ "+( .@i + 1 )+". ] "+.@Name$[.@i]+" - "+.@Count[.@i]+" Points";
+}else{
+		mes "No Record Found.";
+}
+close;
+
+OnNPCKillEvent:
+if( getmonsterinfo( killedrid,MOB_MVPEXP ) )
+	query_sql( "INSERT INTO `mvp_rank` SET `char_id`='"+getcharid(0)+"',`name`='"+strcharinfo(0)+"',`Count`='1' ON DUPLICATE KEY UPDATE `Count`=`Count`+1" );
+end;
+}

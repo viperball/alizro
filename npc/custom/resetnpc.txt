@@ -1,0 +1,132 @@
+//===== rAthena Script =======================================
+//= Reset NPC
+//===== By: ==================================================
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Resets skills, stats, or both.
+
+prontera,155,285,3	script	Rino	877,{
+	if (countitem(46321) > 0) goto RESET_BOTH;
+	if (countitem(6320) > 0) goto RESET_STAT;
+	if (countitem(46320) > 0) goto RESET_SKILL;
+	if (countitem(46322) > 0) goto ALL_SKILLS;
+	mes "[Rino]";
+	mes "ถ้าต้องการให้หนูช่วย";
+	mes "ต้องมีหิน ^FF0000Reset Stone^000000";
+	mes "หรือ ^FF0000Skill Stone^000000";
+	mes "ซึ่งทั้งหมดหาได้จาก Item Shop ค่ะ";
+	close;
+	RESET_BOTH:
+		mes "[Rino]";
+		mes "สวัสดีค่ะ ต้องการ ^FF3355Reset Skill และ Stat^000000 ใช่มั๊ยคะ?";
+		if(select("^0000ffขอคิดแป๊ป^000000:^ff0000แน่นอน^000000") == 1) {
+			next;
+			mes "[Rino]";
+			mes "กลับมาใหม่เมื่อพี่พร้อม";
+			close;
+		} else {
+			next;
+			if (checkfalcon() || checkcart() || checkriding() || ismounting()) {
+				mes "โปรดทำการปลด  " +
+				((checkfalcon()) ? "falcon" : "") +
+				((checkcart()) ? "cart" : "") +
+				((checkriding()) ? "Peco" : "") +
+				((ismounting()) ? "mount" : "") +
+				" ก่อนดำเนินการต่อ";
+					close;
+			}
+			else {
+			delitem 46321,1; //dell
+			ResetSkill;
+			ResetStatus;
+			mes "[Rino]";
+			mes "ค่า Skill และ Status ของพี่โดนล้างแล้วค่ะ";
+			mes "ขอบคุณที่ใช้บริการค่ะ";
+			close;
+			}
+		}
+	RESET_SKILL:
+		mes "[Rino]";
+		mes "สวัสดีค่ะ ต้องการ ^FF3355Reset Skill^000000 ใช่มั๊ยคะ?";
+		if(select("^0000ffขอคิดแป๊ป^000000:^ff0000แน่นอน^000000") == 1) {
+			next;
+			mes "[Rino]";
+			mes "กลับมาใหม่เมื่อพี่พร้อม";
+			close;
+		} else {
+			next;
+			if (checkfalcon() || checkcart() || checkriding() || ismounting()) {
+				mes "โปรดทำการปลด  " +
+				((checkfalcon()) ? "falcon" : "") +
+				((checkcart()) ? "cart" : "") +
+				((checkriding()) ? "Peco" : "") +
+				((ismounting()) ? "mount" : "") +
+				" ก่อนดำเนินการต่อ";
+					close;
+			}
+			else {
+				delitem 46320,1; //dell
+				ResetSkill;
+				mes "[Rino]";
+				mes "ค่า Skill ของพี่โดนล้างแล้วค่ะ";
+				mes "ขอบคุณที่ใช้บริการค่ะ";
+				close;
+			}
+		}
+	RESET_STAT:
+		mes "[Rino]";
+		mes "สวัสดีค่ะ ต้องการ ^FF3355Reset Status^000000 ใช่มั๊ยคะ?";
+		if(select("^0000ffขอคิดแป๊ป^000000:^ff0000แน่นอน^000000") == 1) {
+			next;
+			mes "[Rino]";
+			mes "กลับมาใหม่เมื่อพี่พร้อม";
+			close;
+		} else {
+			next;
+			delitem 6320,1; //dell
+			ResetStatus;
+			mes "[Rino]";
+			mes "ค่า Status ของพี่โดนล้างแล้วค่ะ";
+			mes "ขอบคุณที่ใช้บริการค่ะ";
+			close;
+		}
+	ALL_SKILLS:
+		mes "[Rino]";
+		mes "สวัสดีค่ะ ต้องการ ^FF3355มีทุก Skill^000000 ใช่มั๊ยคะ?";
+		if(select("^0000ffขอคิดแป๊ป^000000:^ff0000แน่นอน^000000") == 1) {
+			next;
+			mes "[Rino]";
+			mes "กลับมาใหม่เมื่อพี่พร้อม";
+			close;
+		} else {
+			next;
+			mes "[Rino]";
+			if(Upper == 1 && Class >= Job_Lord_Knight) goto GET_SKILL;
+			mes "อาชีพพี่ยังไม่รองรับกับความสามารถ";
+			mes "เก็บเลเวลต่อไปให้ถึง Class 3 แล้วค่อยมาหาหนูใหม่";
+			close;
+			
+			GET_SKILL:
+			if(JobLevel < 60){
+				mes "ต้องมีจ๊อบ 60 ก่อนค่ะ";
+				mes "แล้วค่อยมาคุยกะหนูใหม่";
+				close;
+			}
+			if(SkillPoint != 0){
+				mes "ใช้ค่า skill point ให้หมดก่อนค่ะ";
+				mes "แล้วค่อยมาคุยกะหนูใหม่";
+				close;
+			}
+			delitem 46322,1; //dell
+			atcommand "@skillall "+strcharinfo(0);
+			mes "พี่มีสกิลหมด ครบหมดละ ของคลาสพี่ และที่ต่ำกว่า";
+			mes "ขอบคุณที่ใช้บริการค่ะ";
+			close;
+		}
+	
+		
+}

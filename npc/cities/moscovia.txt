@@ -1,0 +1,121 @@
+//===== rAthena Script =======================================
+//= Moscovia Town
+//===== By: ==================================================
+//= Kisuka
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Moscovia Town Script
+//===== Additional Comments: =================================
+//= 1.0 First Version. [Kisuka]
+//= 1.1 Removed villagers (they are part of a quest). [Kisuka]
+//= 1.2 Moved Alberta NPC to pre-re/re paths. [Euphy]
+//============================================================
+
+// Moscovia Transportation :: mosk_trans
+//============================================================
+-	script	::PR_Officer_moscovia	-1,{
+	mes "[Moscovia P.R. Officer]";
+	mes "Moscovia! ท่านรู้จัก Moscovia มั้ย?";
+	mes "ดินแดนมหาสมุทรที่ไร้พรมแดน...";
+	mes "ยินดีต้อนรับสู่ Moscovia";
+	mes "มันเป็นที่ที่น่าพจญภัยและลึกลับ";
+	next;
+	switch(select("เกี่ยวกับ Moscovia...:ไปยัง Moscovia:ยกเลิก")) {
+		case 1:
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "Moscovia เป็นอาณาจักรที่สวยงาม";
+			mes "ในเกาะของเราตั้งอยู่ที่ทางเหนือของRune Midgarts";
+			next;
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "ข้าแน่ใจว่าท่านจะต้องลุ่มหลงไปกับมันอย่างแน่นอน";
+			mes "โดยวิวทิวทัศน์อันแสนงดงามของ Moscovia's";
+			mes "และปราสาทที่สง่างาม";
+			next;
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "ตอนนี้ฤดูหิมะร่วงโรยได้ผ่านไป ข้าดีใจที่ข้าจะได้ให้ท่านดูเมืองที่สวยงามของเรา";
+			next;
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "ถ้าท่านอยากจะมาเยี่ยมเยียน Moscovia";
+			mes "ก็ใช้โอกาสนี้ล่ะ!";
+			mes "ข้าจะช่วยท่านไปยัง Moscovia!";
+			close;
+
+		case 2:
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "โอเค ท่านต้องจ่ายข้า 10,000 เซนี";
+			mes "เพื่อไปยัง Moscovia";
+			mes "แต่เมื่อท่านจะกลับมาท่านไม่ต้องจ่ายอีกแล้ว";
+			next;
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "เราจะไปกันรึยัง?";
+			next;
+			if (select("ไปกันเลย!:ยกเลิก") == 2) {
+				mes "[ประชาสัมพันธ์ Moscovia]";
+				mes "ถ้าท่านยุ่งอยู่โปรดบอกข้าเมื่อต้องการ ข้าจะรอที่จะนำทุก ๆ คนไปยัง Moscovia";
+				close;
+			}
+			if (Zeny < 10000) {
+				mes "[ประชาสัมพันธ์ Moscovia]";
+				mes "ข้าขอโทษแต่ท่านมีเงินไม่พอ ท่านต้องมีอย่างน้อย 10,000 เซนี";
+				mes "เพื่อไปยัง Moscovia";
+				mes "ขอบคุณ";
+				close;
+			} else {
+				mes "[ประชาสัมพันธ์ Moscovia]";
+				mes "เอาล่ะ เรากำลังจะไปกันแล้ว";
+				close2;
+				set Zeny,Zeny - 10000;
+				warp "moscovia",163,55;
+				end;
+			}
+		case 3:
+			mes "[ประชาสัมพันธ์ Moscovia]";
+			mes "ถ้าท่านยุ่งอยู่ ไว้ค่อยมาใหม่นะ ข้าพร้อมที่จะพาทุกคนไปยัง Moscovia";
+			close;
+	}
+}
+
+moscovia,166,53,4	script	ประชาสัมพันธ์ Moscovia#2	960,{
+	mes "[ประชาสัมพันธ์ Moscovia]";
+	mes "เที่ยวเป็นไงบ้าง?";
+	mes "ท่านได้รับความทรงจำดี ๆ จาก Moscovia ไหม?";
+	mes "เรือกำลังจะออกแล้วเพื่อไปยัง Rune Midgarts";
+	next;
+	if (select("กลับไปยัง Alberta:ยกเลิก") == 2) {
+		mes "[ประชาสัมพันธ์ Moscovia]";
+		mes "ถ้าท่านต้องการอยู่ต่อก็อยู่ได้เรื่อย ๆ เลย";
+		close;
+	}
+	mes "[ประชาสัมพันธ์ Moscovia]";
+	mes "มาเที่ยวใหม่ได้เสมอ เอาล่ะ ไปกันเถอะ";
+	close2;
+	if (checkre(0))
+		warp "alberta",244,52;
+	else
+		warp "alberta",243,67;
+	end;
+}
+
+
+// Moscovia Palace :: mos_swan
+//============================================================
+moscovia,253,166,4	script	ทหาร#mosk1	966,{
+	mes "[ทหาร]";
+	mes "ท่านซีซ่า อเล็กเซยที่สาม อยู่ในปราสาท";
+	mes "ท่านปกครอง Moscovia";
+	mes "โปรดอย่าสร้างปัญหาให้ท่าน";
+	close;
+}
+
+-	script	ทหาร#mosk::MoscSoldier	966,{
+	mes "[ทหาร]";
+	mes "ได้โปรดอย่าใช้เสียงดังหรือท่านจะทำให้ท่านซีซ่าโกรธล่ะ";
+	close;
+}
+mosk_in,118,66,5	duplicate(MoscSoldier)	Soldier#mosk02	966
+mosk_in,133,110,3	duplicate(MoscSoldier)	Soldier#mosk03	966
+mosk_in,133,73,3	duplicate(MoscSoldier)	Soldier#mosk04	966
+mosk_in,113,124,5	duplicate(MoscSoldier)	Soldier#mosk05	966

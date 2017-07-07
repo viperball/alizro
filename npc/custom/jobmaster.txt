@@ -1,0 +1,338 @@
+//===== rAthena Script =======================================
+//= Job Master
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.4
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: =========================================
+//= A fully functional job changer.
+//===== Additional Comments: =================================
+//= 1.0 Initial script.
+//= 1.1 Fixed reset on Baby job change.
+//= 1.2 Added Expanded Super Novice support and initial Kagerou/Oboro support.
+//= 1.3 Kagerou/Oboro added.
+//= 1.4 Rebellion added.
+//============================================================
+
+//query_sql( "UPDATE `char` SET `class` = '"++"' WHERE `char`.`char_id` = "+getcharid(0) );	
+
+prontera,153,193,6	script	Job Master	811,{
+function Job_Menu;
+
+	mes "[Job Master]";
+	if (Class > Job_Soul_Linker) {
+		mes "ยังไม่มีอาชีพอื่น ที่ท่านจะเปลี่ยนได้";
+		close;
+	}
+	if (checkfalcon() || checkcart() || checkriding() || ismounting()) {
+		mes "โปรดทำการปลด  " +
+			((checkfalcon()) ? "falcon" : "") +
+			((checkcart()) ? "cart" : "") +
+			((checkriding()) ? "Peco" : "") +
+			((ismounting()) ? "mount" : "") +
+			" ก่อนดำเนินการต่อ";
+		close;
+	}
+	if (.SkillPointCheck && SkillPoint) {
+		mes "โปรดใช้คะแนนทักษะทั้งหมด";
+		mes "ของคุณก่อนดำเนินการต่อ";
+		close;
+	}
+
+	.@eac = eaclass();
+	.@i = ((.ThirdClass) ? roclass(.@eac&EAJ_UPPERMASK) : Class);
+	if (.@i >= Job_Knight && .@i <= Job_Crusader2) {
+		if (BaseLevel < .Rebirth[0] || JobLevel < .Rebirth[1]) {
+			.@blvl = .Rebirth[0] - BaseLevel;
+			.@jlvl = .Rebirth[1] - JobLevel;
+			mes "ท่านต้องการ " +
+				((.@blvl > 0) ? .@blvl + " base levels อีก " + ((.@jlvl > 0) ? "/ " : "") : "") +
+				((.@jlvl > 0) ? .@jlvl + " job levels อีก" : "") + " เพื่อไปต่อ";
+			close;
+		}
+		if (Class > Job_Crusader2) {
+			mes "ต้องการเปลี่ยนเป็นคลาสที่ 3?";
+			next;
+			Job_Menu(roclass(.@eac|EAJL_THIRD));
+			close;
+		}
+		while(1) {
+			mes "โปรดเลือก";
+			next;
+			.@i = select(" ~ ^0055FFเกิดใหม่^000000:" + ((.ThirdClass) ? " ~ ^FF0000อาชีพคลาส 3^000000" : "") + ": ~ ^777777ยกเลิก^000000");
+			if (.@i == 3)
+				close;
+			mes "[Job Master]";
+			mes "ท่านแน่ใจใช่มั๊ย";
+			next;
+			Job_Menu(((.@i == 1) ? Job_Novice_High : roclass(.@eac|EAJL_THIRD)));
+			mes "[Job Master]";
+		}
+	}
+	.@j1 = roclass(.@eac|EAJL_2_1);
+	.@j2 = roclass(.@eac|EAJL_2_2);
+	if ((.@eac&EAJ_UPPERMASK) == EAJ_SUPER_NOVICE)
+		setarray .@exp[0], roclass(.@eac|EAJL_THIRD), 99;
+	if (Class == Job_Ninja || Class == Job_Gunslinger)
+		setarray .@exp[0], .@j1, 70;
+	if (.@exp[0] && .SecondExpanded) {
+		if (BaseLevel < .Rebirth[0] || JobLevel < .@exp[1]) {
+			.@blvl = .Rebirth[0] - BaseLevel;
+			.@jlvl = .@exp[1] - JobLevel;
+			mes "ท่านต้องการ " +
+				((.@blvl > 0) ? .@blvl + " base levels อีก" + ((.@jlvl > 0) ? "/ " : "") : "") +
+				((.@jlvl > 0) ? .@jlvl + " job levels อีก" : "") + "เพื่อไปต่อ";
+			close;
+		}
+		mes "ต้องการเปลี่ยนอาชีพเป็น " + jobname(.@exp[0]) + "?";
+		next;
+		Job_Menu(.@exp[0]);
+		close;
+	}
+	if (.@eac&EAJL_2)
+		if ((.@eac&(EAJL_UPPER|EAJL_BABY)) || roclass(.@eac|EAJL_UPPER) == -1) {
+			mes "ยังไม่มีอาชีพที่ท่านสามารถเปลี่ยนได้";
+			close;
+		}
+	if ((.@eac&EAJ_BASEMASK) == EAJ_NOVICE) {
+		if (JobLevel < .JobReq[0])
+			mes "ต้องการ " + .JobReq[0] + " job levels เพื่อต้องการเปลี่ยนเป็นอาชีพคราส 1";
+		else if (Class == Job_Novice_High && .LastJob && lastJob) {
+			mes "ต้องการเปลี่ยนเอาชีพเดี๋ยวนี้?";
+			next;
+			Job_Menu(roclass((eaclass(lastJob)&EAJ_BASEMASK)|EAJL_UPPER));
+		} else {
+			switch(Class) {
+			case Job_Novice:
+				Job_Menu(
+					Job_Swordman,
+					Job_Mage,
+					Job_Archer,
+					Job_Acolyte,
+					Job_Merchant,
+					Job_Thief,
+					Job_Super_Novice,
+					Job_Taekwon,
+					Job_Gunslinger,
+					Job_Ninja,
+					Job_Baby
+				);
+				break;
+			case Job_Novice_High:
+				Job_Menu(
+					Job_Swordman_High,
+					Job_Mage_High,
+					Job_Archer_High,
+					Job_Acolyte_High,
+					Job_Merchant_High,
+					Job_Thief_High
+				);
+				break;
+			case Job_Baby:
+				Job_Menu(
+					Job_Baby_Swordman,
+					Job_Baby_Mage,
+					Job_Baby_Archer,
+					Job_Baby_Acolyte,
+					Job_Baby_Merchant,
+					Job_Baby_Thief,
+					Job_Super_Baby
+				);
+				break;
+			default:
+				mes "เกิดข้อผิดพลาด.";
+				break;
+			}
+		}
+		close;
+	}
+	if (roclass(.@eac|EAJL_2_1) == -1 || roclass(.@eac|EAJL_2_2) == -1)
+		mes "ยังไม่มีอาชีพที่ท่านสามารถเปลี่ยนได้";
+	else if (!(.@eac&EAJL_2) && JobLevel < .JobReq[1])
+		mes "ต้องการ  " + .JobReq[1] + " job levels เพื่อเปลี่ยนอาชีพไปคลาสที่ 2";
+	else if (.LastJob && lastJob && (.@eac&EAJL_UPPER)) {
+		mes "ต้องการเปลี่ยนเอาชีพเดี๋ยวนี้?";
+		next;
+		Job_Menu(lastJob + Job_Novice_High);
+	} else
+		Job_Menu(.@j1, .@j2);
+	close;
+
+function Job_Menu {
+	while(1) {
+		if (getargcount() > 1) {
+			mes "โปรดเลือกอาชีพ";
+			.@menu$ = "";
+			for (.@i = 0; .@i < getargcount(); .@i++)
+				.@menu$ = .@menu$ + " ~ " + jobname(getarg(.@i)) + ":";
+			.@menu$ = .@menu$+" ~ ^777777Cancel^000000";
+			next;
+			.@i = getarg(select(.@menu$) - 1, 0);
+			if (!.@i)
+				close;
+			if ((.@i == Job_Super_Novice || .@i == Job_Super_Baby) && BaseLevel < .SNovice) {
+				mes "[Job Master]";
+				mes "ต้องการ " + .SNovice + " เลเวล เพื่อเปลี่ยนอาชีพเป็น  " + jobname(.@i) + ".";
+				close;
+			}
+			mes "[Job Master]";
+			mes "ท่านแน่ใจใช่มั๊ย?";
+			next;
+		} else
+			.@i = getarg(0);
+		if (select(" ~ เปลี่ยนเป็น ^0055FF" + jobname(.@i) + "^000000 class: ~ ^777777" + ((getargcount() > 1) ? "ย้อนกลับ" : "ยกเลิก") + "^000000") == 1) {
+			mes "[Job Master]";
+			mes "ตอนนี้ท่านคือ " + callfunc("F_InsertArticle", jobname(.@i)) + "!";
+			if (.@i == Job_Novice_High && .LastJob)
+				lastJob = Class;
+			jobchange .@i;
+			query_sql( "UPDATE `char` SET `class` = '"+.@i+"' WHERE `char`.`char_id` = "+getcharid(0) );	
+			if (.@i == Job_Novice_High)
+				resetlvl(1);
+			else if (.@i == Job_Baby) {
+				resetstatus;
+				resetskill;
+				set SkillPoint,0;
+			}
+			specialeffect2 EF_ANGEL2;
+			specialeffect2 EF_ELECTRIC;
+			if (.Platinum)
+				callsub Get_Platinum;
+			if (.BasicWeapon) {
+				switch (BaseJob) {
+						case Job_Novice:
+										getitem 13040 ,1;  // Novice Cutter
+										break;
+						case Job_Swordman:
+										getitem 1116,1;  // Katana
+										break;
+						case Job_Mage:
+										getitem 1601,1;  // Rod
+										break;
+						case Job_Archer:
+										getitem 1701,1;  // Bow
+										getitem 1750,500;  // Arrow
+										break;
+						case Job_Acolyte:
+										getitem 1504,1;  // Mace
+										break;
+						case Job_Merchant:
+										getitem 1351,1;  // Battle Axe
+										break;
+						case Job_Thief:
+										getitem 1207,1;  // Main Gauche
+										break;
+				}
+			}
+
+			close;
+		}
+		if (getargcount() == 1)
+			return;
+		mes "[Job Master]";
+	}
+	end;
+}
+
+Get_Platinum:
+		skill "NV_FIRSTAID",1,SKILL_PERM;
+	switch (BaseClass) {
+	case Job_Novice:
+		if (Class != Job_Super_Novice)
+			skill "NV_TRICKDEAD",1,SKILL_PERM;			
+		break;
+	case Job_Swordman:
+		skill "SM_MOVINGRECOVERY",1,SKILL_PERM;
+		skill "SM_FATALBLOW",1,SKILL_PERM;
+		skill "SM_AUTOBERSERK",1,SKILL_PERM;		
+		break;
+	case Job_Mage:
+		skill "MG_ENERGYCOAT",1,SKILL_PERM;
+		break;
+	case Job_Archer:
+		skill "AC_MAKINGARROW",1,SKILL_PERM;
+		skill "AC_CHARGEARROW",1,SKILL_PERM;		
+		break;
+	case Job_Acolyte:
+		skill "AL_HOLYLIGHT",1,SKILL_PERM;
+		break;
+	case Job_Merchant:
+		skill "MC_CARTREVOLUTION",1,SKILL_PERM;
+		skill "MC_CHANGECART",1,SKILL_PERM;
+		skill "MC_LOUD",1,SKILL_PERM;		
+		break;
+	case Job_Thief:
+		skill "TF_SPRINKLESAND",1,SKILL_PERM;
+		skill "TF_BACKSLIDING",1,SKILL_PERM;
+		skill "TF_PICKSTONE",1,SKILL_PERM;
+		skill "TF_THROWSTONE",1,SKILL_PERM;
+		break;
+	default:
+		break;
+	}
+	switch (BaseJob) {
+	case Job_Knight:
+		skill "KN_CHARGEATK",1,SKILL_PERM;
+		break;
+	case Job_Priest:
+		skill "PR_REDEMPTIO",1,SKILL_PERM;
+		break;
+	case Job_Wizard:
+		skill "WZ_SIGHTBLASTER",1,SKILL_PERM;
+		break;
+	case Job_Blacksmith:
+		skill "BS_UNFAIRLYTRICK",1,SKILL_PERM;
+		skill "BS_GREED",1,SKILL_PERM;
+		break;
+	case Job_Hunter:
+		skill "HT_PHANTASMIC",1,SKILL_PERM;
+		break;
+	case Job_Assassin:
+		skill "AS_SONICACCEL",1,SKILL_PERM;
+		skill "AS_VENOMKNIFE",1,SKILL_PERM;
+		break;
+	case Job_Crusader:
+		skill "CR_SHRINK",1,SKILL_PERM;
+		break;
+	case Job_Monk:
+		skill "MO_KITRANSLATION",1,SKILL_PERM;
+		skill "MO_BALKYOUNG",1,SKILL_PERM;
+		break;
+	case Job_Sage:
+		skill "SA_CREATECON",1,SKILL_PERM;
+		skill "SA_ELEMENTWATER",1,SKILL_PERM;
+		skill "SA_ELEMENTGROUND",1,SKILL_PERM;
+		skill "SA_ELEMENTFIRE",1,SKILL_PERM;
+		skill "SA_ELEMENTWIND",1,SKILL_PERM;
+		break;
+	case Job_Rogue:
+		skill "RG_CLOSECONFINE",1,SKILL_PERM;
+		break;
+	case Job_Alchemist:
+		skill "AM_BIOETHICS",1,SKILL_PERM;
+		break;
+	case Job_Bard:
+		skill "BA_PANGVOICE",1,SKILL_PERM;
+		break;
+	case Job_Dancer:
+		skill "DC_WINKCHARM",1,SKILL_PERM;
+		break;
+	default:
+		break;
+	}
+	return;
+
+OnInit:
+	setarray .Rebirth[0],99,50;	// Minimum base level, job level to rebirth OR change to third class
+	setarray .JobReq[0],10,40;	// Minimum job level to turn into 1st class, 2nd class
+	.ThirdClass = 1;			// Enable third classes? (1: yes / 0: no)
+	.SecondExpanded = 1;		// Enable new expanded second classes: Ex. Super Novice, Kagerou/Oboro, Rebellion? (1: yes / 0: no)
+	.SNovice = 45;				// Minimum base level to turn into Super Novice
+	.LastJob = 1;				// Enforce linear class changes? (1: yes / 0: no)
+	.SkillPointCheck = 1;		// Force player to use up all skill points? (1: yes / 0: no)
+	.Platinum = 1;				// Get platinum skills automatically? (1: yes / 0: no)
+	.BasicWeapon = 1;				// Get weapon after chage for first class ? (1: yes / 0: no)
+	end;
+}

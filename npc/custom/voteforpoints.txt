@@ -1,0 +1,142 @@
+//====================================================================================
+//Script Name: Vote For Points NPC Script for FluxCP
+//SVN: Tested in rAthena r156513
+//Developed By: JayPee Mateo
+//Version: 1.0
+//Requirement(s): FluxCP V4P Addon
+//Description: This is a npc script for FluxCP Vote for points in order for the players
+//to claim their vote points
+//====================================================================================
+
+prontera,164,109,4	script	VFP Manager	109,{
+
+//Function Prototypes
+function getPoints;//This will return the points of the player stored in the database
+function updatePoints;//This will updates the points of the player stored in the database
+
+
+//NPC Name
+set .npcname$,"[ Vote For Points ]";
+set .@exprate,1;
+
+
+//Script Start	
+	mes .npcname$;
+	mes "หวัดดีจร้า,คุณต้องการเปลี่ยนคะแนน โหวตเป็น cash point หรือเปล่า?:";
+	switch(select("ใช่,เราต้องการ:ขอดู คะแนนโหวต เราหน่อย"))
+	{
+		case 1:
+		next;
+			mes .npcname$;
+			mes "อัตราแลกเปลี่ยนวันนี้:";
+			mes "^0000FF"+.@exprate+"^000000 คะแนนโหวต = ^00FF001^000000 cash point";
+		next;
+			set .@points,getPoints(getcharid(3));
+				if(.@points>0)
+				{
+					menu "^FF0000แลกทั้งหมด",Le0,"^0000FFระบุจำนวน",Le1,"^00FF00ออก",LeEnd;
+					Le0:
+						mes .npcname$;
+						mes "คุณมีทั้งหมด ^0000FF"+.@points+"^000000 คะแนนโหวต";
+						mes "ยืนยันเพื่อทำกรแลกเปลี่ยนทั้งหมด?";
+							if(select("ใช่:ไม่")==1)
+							{
+								next;
+								mes .npcname$;
+								mes "การแลกเปลี่ยนเสร็จสิ้น";
+								mes "คุณไม่เหลือคะแนนโหวตอีกต่อไป";
+								updatePoints(getcharid(3),0);
+								set #CASHPOINTS,#CASHPOINTS+.@points;
+								Set @CEx,#CASHPOINTS;
+								mes "และคุณมี Cash Point ^FF0000" + @CEx + "^000000! ";
+								mes "ขอบคุณที่ใช้บริการ";
+								close;
+							}
+							else
+							{
+								next;
+								mes .npcname$;
+								mes "เปลี่ยนใจเมื่อไหร่ก็มานะ";
+								mes "ขอบคุณที่ใช้บริการ";
+								close;
+							}
+					Le1:
+						mes .npcname$;
+						mes "คุณมีทั้งหมด ^0000FF"+.@points+"^000000 คะแนนโหวต";
+						mes "ต้องการแลกเปลี่ยนเท่าไหร่คะ?";
+						input @ExchangeEC;
+						if (@ExchangeEC >.@points || @ExchangeEC <0) goto ENeedPoint;
+						mes "คุณต้องการแลก ^0000FF" + @ExchangeEC + "^000000 คะแนนโหวต!";
+						next;
+						mes "ยืนยันเพื่อทำกรแลกเปลี่ยน";
+							if(select("ใช่:ไม่")==1)
+							{
+								next;
+								set .@rpoints,.@points-@ExchangeEC;
+								mes .npcname$;
+								mes "การแลกเปลี่ยนเสร็จสิ้น";
+								mes "คุณหลือ^0000FF" + .@rpoints + "^000000! คะแนนโหวต ";
+								updatePoints(getcharid(3),.@rpoints);
+								set #CASHPOINTS,#CASHPOINTS+@ExchangeEC;
+								set @CEx,#CASHPOINTS;
+								mes "และคุณมี Cash Point ^FF0000" + @CEx + "^000000! ";
+								mes "ขอบคุณที่ใช้บริการ";
+								close;
+							}
+							else
+							{
+								next;
+								mes .npcname$;
+								mes "เปลี่ยนใจเมื่อไหร่ก็มานะ";
+								mes "ขอบคุณที่ใช้บริการ";
+								close;
+							}
+						
+						ENeedPoint:
+							next;
+							mes .npcname$;
+							mes "คุณใส่ตัวเลขเกินกว่าที่คุณมี";
+							mes "กรุณาทำรายการใหม่อีกครั้ง";
+							close;
+					LeEnd:
+						next;
+						mes .npcname$;
+						mes "ขอบคุณที่ใช้บริการ";
+						close;
+				}
+				else
+				{
+					next;
+					mes .npcname$;
+					mes "แต่คุณไม่มีคะแนนพอที่จะแลกนินาา";
+					mes "กลับมาอีกครั้งเมื่อท่านมีคะแนนโหวต";
+					mes "ซึ่งท่านสามารถอ่านได้จากหน้าเว็บ";
+					close;
+				}
+		case 2:
+			next;
+			mes .npcname$;			
+			set .@points,getPoints(getcharid(3));			
+			mes "ตอนนี้คุณมีทั้งหมด ^0000FF"+.@points+"^000000 คะแนนโหวต";
+		close;
+	}
+end;
+
+
+//Functions Bodies
+	function updatePoints {
+		set .@account_id,getarg(0);
+		set .@usedPoints,getarg(1);
+		query_sql("UPDATE `cp_v4p_voters` SET points="+.@usedPoints+" WHERE account_id='"+.@account_id+"'");
+		return;
+	}
+
+	function getPoints {
+		set .@account_id,getarg(0);
+		query_sql("SELECT `points` FROM `cp_v4p_voters` WHERE account_id="+.@account_id+" LIMIT 1",.@points);
+		if(getarraysize(.@points)==0)
+			return 0;		
+		return .@points[0];
+	}
+	
+}

@@ -1,0 +1,42 @@
+//===== rAthena Script ======================================= 
+//= Izlude Airport NPCs
+//===== By: ================================================== 
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Izlude Airport NPCs
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+-	script	::Airship_Staff_izlude	-1,{
+	mes "[Airship Staff]";
+	mes "ยินดีต้อนรับ! ท่านต้องการที่จะขึ้นไปยังยานเหาะที่กำลังจะจอดที่ Juno และ Rachel ใช่ไหม?";
+	next;
+	if (select("ไปยังยานเหาะที่จะจอดที่ Juno/Rachel:ยกเลิก") == 1) {
+		mes "[Airship Staff]";
+		mes "ค่าใช้จ่าย 1,200 เซนี อย่างไรก็ตาม หากท่านมีตั๋วยานเหาะ ท่านจะผ่านไปได้เลย ท่านจะขึ้นยานเหาะหรือไม่?";
+		next;
+		if (select("ใช่:ไม่ขึ้น") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "airplane_01",244,58;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "airplane_01",244,58;
+				end;
+			}
+			mes "[Airship Staff]";
+			mes "ข้าขอโทษ แต่ท่านมีเซนีไม่เพียงพอ ค่าใช้จ่าย 1,200 เซนี";
+			close;
+		}
+	}
+	mes "[Airship Staff]";
+	mes "ขอบคุณมาก มาใช้บริการของเราได้เสมอ ขอให้โชคดี~";
+	close;
+}

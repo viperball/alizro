@@ -1,0 +1,114 @@
+//===== rAthena Script =======================================================
+//= โรงจำนำ Costume
+//===== By: ==================================================================
+//= Script: naLizn+
+//===== Current Version: =====================================================
+//= 1.0
+//===== Compatible With: =====================================================
+//= eAthena, rAthena
+//===== Description: =========================================================
+//= รับจำนำ costume
+//===== Contact me ===========================================================
+//= https://discordapp.com/channels/243351250077220864/243351250077220864 ====
+//============================================================================
+prontera,155,182,5	script	รับจำนำ	421,{
+	disable_items;
+	set .@getCost,1000000;
+	set .@returnCost,1300000;
+	setarray .@costume[0],0;
+	set .@CostumeList$,"";
+	if(pawn !=0 ){
+		mes "^0B7E54[ รับจำนำ ]^000000";
+		mes "ท่านไม่สามารถจำนำเพิ่มได้";
+		mes "หากไม่ไถ่ของเก่าคืน";
+		if(select("ข้ามาไถ่ของ","ไม่ล่ะ")==2){
+			next;
+			mes "^0B7E54[ รับจำนำ ]^000000";
+			mes "ไว้คุยกันใหม่  บายย";
+			close;
+		}
+		next;
+		mes "ท่านจำนำ ^804040"+getitemname(pawn)+"^000000 ไว้";
+		mes "ต้องไถ่คืนในราคา ^FF0000"+.@returnCost+"^000000";
+		mes "ตกลงมั๊ย?";
+		if(select("^FF0000ตกลง^000000","ยังก่อน")==2)
+		{
+				next;
+				mes "^0B7E54[ รับจำนำ ]^000000";
+				mes "ไว้คุยกันใหม่  บายย";
+				close;
+		}
+		if(Zeny<.@returnCost){
+				next;
+				mes "^0B7E54[ รับจำนำ ]^000000";
+				mes "ท่านมีเงินไม่พอ ไปหามาเพิ่มก่อนนะ";
+				close;
+		}
+		next;
+		set Zeny,Zeny-.@returnCost;
+		getitem pawn,1;
+		set pawn,0;
+		mes "^0B7E54[ รับจำนำ ]^000000";
+		mes "ขอบคุณที่ใช้บริการ";
+		close;
+	}
+	mes "^0B7E54[ รับจำนำ ]^000000";
+	mes "ต้องการ zeny ด่วนเซิญทางนี้";
+	mes "แต่ข้ารับเฉพาะ คอสตูมเท่านั้นนะ";
+	if(select("ข้าร้อนเงิน","ไม่ล่ะ")==2)
+	{
+		next;
+		mes "^0B7E54[ รับจำนำ ]^000000";
+		mes "อยากได้เงินม่ะไหร่ก้อแวะมานะ";
+		close;
+	}
+	if ( getequipisequiped(EQI_COSTUME_HEAD_LOW) || getequipisequiped(EQI_COSTUME_HEAD_MID) || getequipisequiped(EQI_COSTUME_HEAD_TOP) || getequipisequiped(EQI_COSTUME_GARMENT) )
+		{
+			next;
+			mes "^0B7E54[ รับจำนำ ]^000000";
+			mes "อยากจำนำชิ้นไหนล่ะ";
+			set @j,0;
+			for (set @i,10; @i<15; @i++){
+				if(getequipid(@i) != (-1)){
+					set .@costume[@j], getequipid(@i);					
+					@j++;
+				}
+			}
+			set .@size,getarraysize(.@costume);
+			
+			for (set @i,0; @i<.@size; @i++){
+				set .@CostumeList$, .@CostumeList$+getitemname(.@costume[@i]);
+				if( @i != (.@size-1)) set .@CostumeList$, .@CostumeList$+":";
+			}
+			menu .@CostumeList$,-;
+			next;
+			mes "^0B7E54[ รับจำนำ ]^000000";
+			mes "ท่านเลือกที่จะจำนำ ^804040"+getitemname(.@costume[@menu-1])+"^000000";
+			mes "ข้าจะให้มันในราคา ^0000FF"+.@getCost+"^000000";
+			mes "และท่านต้องมาไถ่คืนในราคา ^FF0000"+.@returnCost+"^000000";
+			mes "ตกลงมั๊ย";
+			if(select("ไม่ล่ะ","^FF0000ตกลง^000000")==1)
+			{
+				next;
+				mes "^0B7E54[ รับจำนำ ]^000000";
+				mes "แสดงว่าท่านไม่ได้ร้อนเงินจริงๆนะสิ";
+				close;
+			}
+			next;
+			set pawn,.@costume[@menu-1];
+			delitem .@costume[@menu-1],1;
+			set Zeny,Zeny+.@getCost;
+			mes "^0B7E54[ รับจำนำ ]^000000";
+			mes "ขอบคุณที่ใช้บริการ";
+			close;
+		}
+	else{
+		next;
+		mes "^0B7E54[ รับจำนำ ]^000000";
+		mes "ท่านไม่มีอระไรที่ข้าต้องการ";
+		mes "อย่างที่ข้าบอกไปแล้ว";
+		mes "ข้ารับเฉพาะ คอสตูมเท่านั้น";
+		mes "ลาก่อน";
+		close;
+	}
+}

@@ -1,0 +1,124 @@
+//===== rAthena Script ======================================= 
+//= Yuno Airport Staff
+//===== By: ================================================== 
+//= L0ne_W0lf, Muad_Dib
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Yuno Airport Staff
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+y_airport,143,43,5	script	Airport Staff#y_air1a::y_airport1	90,{
+	mes "[Airport Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Juno ที่ที่ไม่เคยหยุดบินไปยัง Einbroch, Lighthalzen และ Hugel,";
+	mes "และเรามีเที่ยวบินไปไปยัง Izlude และ Rachel อีกด้วย";
+	mes "ให้ข้าช่วยอะไรดีล่ะ?";
+	next;
+	if (select("ขึ้นยานเหาะ:ยกเลิก") == 1) {
+		mes "[Airport Staff]";
+		mes "ยานเหาะมีค่าใช้จ่าย 1,200 zeny แต่ถ้าคุณมีตั๋วฟรีสำหรับยานเหาะ";
+		mes "ก็จะไม่มีค่าใช้จ่าย";
+		mes "ท่านจะขึ้นเรือเหาะหรือไม่?";
+		next;
+		if (select("ใช่:ยังไม่ขึ้น") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "y_airport",148,51;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "y_airport",148,51;
+				end;
+			}
+			mes "[Airport Staff]";
+			mes "ข้าขอโทษแต่ท่านต้องมีค่าใช้จ่าย 1,200 zeny เพื่อขึ้นยานเหาะ";
+			close;
+		}
+	}
+	mes "[Airport Staff]";
+	mes "ขอบคุณมาก ๆ ขอให้เดินทางโดยสวัสดิภาพนะ";
+	close;
+}
+
+y_airport,158,43,5	duplicate(y_airport1)	Airport Staff#y_air1b	90
+y_airport,126,43,5	duplicate(y_airport1)	Airport Staff#y_air1c	90
+
+y_airport,143,49,3	script	Arrival Staff#y_air2a::y_airport2	90,{
+	mes "[Airport Staff]";
+	mes "ยินดีต้อนรับสู่ท่ายานเหาะ Juno ถ้าท่านเพิ่งลงมาจากเที่ยวบิน ให้ข้าได้แนะนำท่านเกี่ยวกับสถานีหลักนี้ อย่างไรก็ตาม";
+	mes "โปรดลงในที่ที่เป็นจุดหมายปลายทางของท่าน";
+	next;
+	if (select("ออกไปยังสถานีหลัก:ยกเลิก") == 1) {
+		mes "[พนักงานต้อนรับ]";
+		mes "เมื่อท่านไปยังสถานีหลัก ท่านต้องจ่ายค่าธรรมเนียมอีกครั้งเพื่อขึ้นมายานเหาะ ท่านควรจะออกเมื่อจุดหมายปลายทางของท่านคือ Juno";
+		mes "ออกไปยังสถานีหลักหรือไม่?";
+		next;
+		if (select("ใช่:ไม่ใช่") == 1) {
+			warp "y_airport",142,40;
+			end;
+		}
+	}
+	mes "[Airport Staff]";
+	mes "ได้เลย ขอบคุณมาก ๆ นะ ที่มาอุดหนุน และขอให้ท่านเดินทางโดยสวัสดิภาพ~";
+	close;
+}
+
+y_airport,126,51,3	duplicate(y_airport2)	Arrival Staff#y_air2b	90
+y_airport,158,50,3	duplicate(y_airport2)	Arrival Staff#y_air2c	90
+
+y_airport,145,63,5	script	Domestic Boarding	91,{
+	mes "[Boarding Staff]";
+	mes "ท่านจะลงที่ Einbroch,";
+	mes "Lighthalzen และ Hugel รึเปล่า? ถ้าใช่";
+	mes "โปรดให้ข้าช่วยนำทางท่านในการเทียบท่า";
+	next;
+	if (select("ใช่:ไม่ใช่") == 1) {
+		warp "yuno",59,244;
+		end;
+	}
+	mes "[Boarding Staff]";
+	mes "โอเค ๆ จะลงเมื่อไหร่ก็บอกข้าได้เลย ขอให้มีความสุขในการเดินทาง~";
+	close;
+}
+
+y_airport,140,63,5	script	International Boarding	91,{
+	mes "[Boarding Staff]";
+	mes "ท่านมีจุดหมายปลายทางที่ Juno, Izlude และ Rachel รึเปล่า?";
+	mes "ถ้าใช่ โปรดให้ข้าช่วยนำทางท่านในการเทียบท่า";
+	next;
+	if (select("ใช่:ไม่ใช่") == 1) {
+		warp "yuno",47,244;
+		end;
+	}
+	mes "[Boarding Staff]";
+	mes "โอเค เมื่อท่านขึ้นยานเหาะของเรา เราก็จะบริการท่านอย่างดี และข้าขอให้ท่านมีความสุขในการเดินทางไปกับเรา";
+	close;
+}
+
+yuno,14,262,5	script	Airship Staff#yuno01	91,{
+	mes "[Airship Staff]";
+	mes "ยินดีต้อนรับสู่ท่านยานเหาะ Juno";
+	mes "โปรดใช้ประตูนี้เพื่อลงไปยังท่ายานเหาะ Izlude";
+	mes "ที่อยู่ในอาณาจักร Rune-Midgarts";
+	mes "และ Rachel ในอาณาจักร Arunafeltz";
+	next;
+	mes "[Airship Staff]";
+	mes "หากไม่ใช่ แล้ว Juno คือจุดหมายของท่านโปรดเดินลงบันไดแล้วไปถามพนักงานต้อนรับเพื่อไปยังสถานีหลัก ขอบคุณที่ใช้บริการของเรา";
+	close;
+}
+
+yuno,88,263,3	script	Airship Staff#yuno02	91,{
+	mes "[Airship Staff]";
+	mes "ยินดีต้อนรับสู่ท่านยานเหาะ Juno";
+	mes "โปรดใช้ประตูนี้เพื่อลงไปยังท่ายานเหาะ Einbroch, Lighthalzen และ";
+	mes "Hugel ในอาณาจักร Schwaltzvalt";
+	next;
+	mes "[Airship Staff]";
+	mes "หากไม่ใช่ แล้ว Juno คือจุดหมายของท่านโปรดเดินลงบันไดแล้วไปถามพนักงานต้อนรับเพื่อไปยังสถานีหลัก ขอบคุณที่ใช้บริการของเรา";
+	close;
+}

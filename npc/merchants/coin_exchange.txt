@@ -1,0 +1,88 @@
+//===== rAthena Script =======================================
+//= Coin Merchants
+//===== By: ==================================================
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Coin redemption NPCs.
+//===== Additional Comments: =================================
+//= 1.0 First version 
+//= 1.1 Fixed checkweight. [Gepard]
+//= 1.2 Optimized and merged into one file. [Euphy]
+//============================================================
+
+// Manuk & Splendide
+//============================================================
+-	script	::merchant_13_2	-1,{
+	set .@n$, "["+strnpcinfo(1)+"]";
+	mes .@n$;
+	if (isequipped(2782) && ep13_2_rhea == 100) { // <<<<<  หากไม่ต้องการทำตามเควสปกติ ให้ใส่   /*&& ep13_2_rhea == 100*/   แทน && ep13_2_rhea == 100
+		if (!checkweight(1201,1)) {
+			mes "มันดูเหมือนคุณจะแบกอะไรต่อไม่ไหวแล้วนะ ไปนำไอเท็มเก็บไว้ในคลังก่อนดีไหม??";
+			close;
+		}
+		mes "สวัสดี";
+		mes "ท่านมองหาอะไรอยู่รึ?";
+		next;
+		if (strnpcinfo(1) == "พ่อค้าแห่ง Manuk") {
+			setarray .@Items[2],12342,12343,12348;
+			set .@Book,11019; //Manuk_Selling_Item
+			set .@Coin,6080; //Manuk_Coin
+			set .@i, select("ดูรายละเอียดไอเท็ม:ซื้อ Manuk's Opportunity:ซื้อ Manuk's Courage:ซื้อ Manuk's Faith:ยกเลิก");
+		}
+		else {
+			setarray .@Items[2],12344,12345,12349;
+			set .@Book,11018; //Splendide_Selling_Item
+			set .@Coin,6081; //Splendide_Coin
+			set .@i, select("ดูรายละเอียดไอเท็ม:ซื้อ Pinguicula's Fruit Jam:ซื้อ Luciola's Honey Jam:ซื้อ Cornus's Tears:ยกเลิก");
+		}
+		mes .@n$;
+		if (.@i == 1) {
+			mes "นี่คือรายละเอียดไอเท็ม";
+			close2;
+			readbook .@Book,1;
+			end;
+		}
+		else if (.@i < 5) {
+			mes "ข้าสามารถขาย 3 "+getitemname(.@Items[.@i])+" ด้วยราคา ^3131FF1 coin^000000";
+			next;
+			switch(select("ซื้อ:ยกเลิก")) {
+			case 1:
+				if (countitem(.@Coin)) {
+					mes .@n$;
+					mes "ขอบคุณมาก ๆ เลยนะ";
+					delitem .@Coin,1; 
+					getitem .@Items[.@i],3;
+					close;
+				}
+				else {
+					mes .@n$;
+					mes "ท่านมีเหรียญไม่พอ";
+					close;
+				}
+			case 2:
+				mes .@n$;
+				break;
+			}
+		}
+		mes "พบกันใหม่เมื่อท่านเปลี่ยนใจ";
+		close;
+	}
+	else {
+		if (strnpcinfo(1) == "พ่อค้าแห่ง Manuk") {
+			mes "อาร์ตตต โอร์ตต ต";
+			mes "โคร์ว เฮ้ส อิส เด อร์";
+		}
+		else {
+			mes "บรูว์เวรอล่า";
+			mes "ทาสน่าอารดรู อิเย รู";
+		}
+		close;
+	}
+}
+man_in01,286,16,1	duplicate(merchant_13_2)	พ่อค้าแห่ง Manuk	454
+spl_in01,110,326,5	duplicate(merchant_13_2)	พ่อค้าแห่ง Splendide	439

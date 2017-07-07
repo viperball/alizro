@@ -1,0 +1,199 @@
+prontera,237,69,4	script	PoringGamePlay	1090,{
+goto PLZ_Main;
+
+PLZ_Main:
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "- ยินดีต้อนรับเซียนทุกท่าน";
+	mes "- ท่านจะให้ข้าเริ่มเกมแล้วหรือยัง";
+	mes "- ท่านต้องเสีย ^00AA55"+getitemname(7539)+"^000000";
+	mes "- จำนวน [ ^9900FF5^000000 ] เหรียญ ให้แก่ข้า";
+	next;
+if(select("- เริ่มเลย","- ยังก่อน")==2)
+close;
+
+if($@PoringGamePlaying==1){
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "ตอนนี้ข้าไม่ว่าง กรุณารอสักหน่อย";
+close;
+
+}
+if(countitem(7539)<0){
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "ท่านมีเหรียญไม่พอ";
+close;
+}
+delitem 7539,5;
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "ตอนนี้ข้าเริ่มกิจกรรมให้ท่านแล้วหล่ะ";
+donpcevent "PoringGamePlay::OnPoringGameAnnounce";
+close;
+end;
+
+
+OnPoringGameAnnounce:
+	set $@PoringGamePlaying,1;
+		announce "[ PoringGame ] : ขณะนี้มีผู้เริ่ม PoringGame แล้ว อีก 1 นาทีจะทำการเสี่ยงทายแล้ว",8;
+	sleep2 10000;
+		npctalk "ท่านใดแทงเอาไว้ได้ถูกต้อง รีบไปรับรางวัลด้วยหล่ะ";
+	sleep2 10000;
+		npctalk "ท่านใดยังไม่ได้แทงรีบแทงเข้าหล่ะ มีเวลาอีก 40 วินาที";
+	sleep2 10000;
+		npctalk "ตอนนี้เหลือเวลาอีกเพียง 30 วินาทีแล้ว";
+	sleep2 10000;
+		npctalk "เหลือเวลาอีก 20 วินาทีสุดท้าย";
+	sleep2 10000;
+		npctalk "ข้าจะนับถอยหลัง 10 วินาที"; 
+	sleep2 1000;npctalk "9";
+	sleep2 1000;npctalk "8";
+	sleep2 1000;npctalk "7";
+	sleep2 1000;npctalk "6";
+	sleep2 1000;npctalk "5";
+	sleep2 1000;npctalk "4";
+	sleep2 1000;npctalk "3";
+	sleep2 1000;npctalk "2";
+	sleep2 1000;npctalk "1";
+	sleep2 1000;npctalk "เริ่มการเสี่ยงทายได้แล้ว ณ บัดนี้"; 
+	donpcevent "PoringGamePlay::OnPoringGamePlaying";
+end;
+
+OnPoringGamePlaying:
+	set $@PoringGameRunning,1;
+	set $PoringGameRound,$PoringGameRound+1;
+	set $@PoringGameTemp,rand(0,1);
+	
+	if ($@PoringGameTemp)
+		set $FSC_Win,2;
+	else
+		set $FSC_Win,1;
+	
+	//specialeffect 68;
+	donpcevent "PoringGameChoose#01::OnResetRoom";
+	donpcevent "PoringGameChoose#02::OnResetRoom";
+
+	donpcevent "PoringGameChoose#0"+$FSC_Win+"::OnEffect";
+	set $@PoringGamePlaying,0;
+	set $@PoringGameRunning,0;
+end;
+}
+
+
+prontera,231,65,6	script	PoringGameChoose#01	1002,{
+	callfunc("FuncPoringGameChoose",1,2);
+	end;
+OnEffect:
+	for(set $@FSC_i,1;$@FSC_i<15;set $@FSC_i,$@FSC_i+1){
+		specialeffect 68;
+		sleep2 500;
+	}
+	
+	end;
+OnResetRoom:
+	delwaitingroom "PoringGameChoose#01";
+	set $FSC_Coin1,0;
+	set $FSC_Player1,0;
+	waitingroom"คนแทง [ 0 ] รวม [ 0 ]",0;
+	end;
+OnInit:waitingroom"คนแทง [ 0 ] รวม [ 0 ]",0;end;
+}
+
+
+prontera,244,65,4	script	PoringGameChoose#02	1113,{
+	callfunc("FuncPoringGameChoose",2,2);
+	end;
+OnEffect:
+	for(set $@FSC_i,1;$@FSC_i<15;set $@FSC_i,$@FSC_i+1){
+		specialeffect 68;
+		sleep2 500;
+	}
+	end;
+OnResetRoom:
+	delwaitingroom "PoringGameChoose#02";
+	set $FSC_Coin2,0;
+	set $FSC_Player2,0;
+	waitingroom"คนแทง [ 0 ] รวม [ 0 ]",0;
+	end;
+OnInit:
+	waitingroom"คนแทง [ 0 ] รวม [ 0 ]",0;
+	end;
+}
+
+
+function	script	FuncPoringGameChoose	{
+	if($@PoringGameRunning==1){
+		mes "^FF0000[ PoringGame ]^000000";
+		mes "- รอบนี้เกมได้เริ่มต้นขึ้นแล้ว";
+		mes "- กรุณารอสักหน่อยนะ";
+		close;
+		end;
+	}
+	set .@FSC_Poring,getarg(0);
+	set .@FSC_GetPoint,getarg(1);
+	if(getd("FSC_Coin"+.@FSC_Poring)>0){
+		if(getd("PoringGameRound"+.@FSC_Poring)==$PoringGameRound-1&&.@FSC_Poring==$FSC_Win){
+			set .@FSC_Temp,getd("FSC_Coin"+.@FSC_Poring)*.@FSC_GetPoint;
+			getitem 7539,.@FSC_Temp;
+			setd "FSC_Coin"+.@FSC_Poring,0;
+			mes "^FF0000[ PoringGame ]^000000";
+			mes "- ยินดีด้วยท่านได้รับ ^00AA55"+getitemname(7539)+"^000000";
+			mes "- เป็นจำนวน [ ^AA3366"+.@FSC_Temp+"^000000 ]";
+			next;
+		}
+	}
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "- แทง 1 ได้คืน ^0000FF"+.@FSC_GetPoint+"^000000";
+	mes "- ต้องใช้ ^00AA55"+getitemname(7539)+"^000000 ในการแทง";
+	if(getd("FSC_Coin"+.@FSC_Poring)!=0&&getd("PoringGameRound"+.@FSC_Poring)==$PoringGameRound){
+		mes "- ท่านแทงตัวนี้ไว้แล้ว [ ^AA3333"+getd("FSC_Coin"+.@FSC_Poring)+"^000000 ]";
+		mes "- ท่านไม่สามารถแทงได้อีก";
+		close;
+	}
+	mes "- ท่านยัง^FF0000ไม่ได้^000000แทงตัวนี้";
+	mes "- ท่านต้องการจะแทงเท่าไหร่";
+	mes "^FF0000*คำเตือน เหรียญจะมีในตัวได้ไม่เกิน 30,000อัน^000000";
+	next;
+	input .@FSC_Input;
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "- ท่านยืนยันจะแทงจำนวน [ ^2244BB"+.@FSC_Input+"^000000 ] ใช่มั้ย";
+	next;
+	if(select("- ถูกต้อง","- ช้าก่อนข้าขอคิดใหม่")==2)
+	close;
+	if(countitem(7539)<.@FSC_Input){
+		mes "^FF0000[ PoringGame ]^000000";
+		mes "- ท่านมี [ ^2244BB"+getitemname(7539)+"^000000 ] ไม่พอ";
+		mes "- ท่านไปหาซื้อให้พอก่อน";
+		close;
+		return;
+	}
+	if(.@FSC_Input==0){
+		mes "^FF0000[ PoringGame ]^000000";
+		mes "- กรุณาแทงอย่างต่ำที่สุด ^0000FF1^000000 ชิ้น";
+		close;
+		return;
+	}
+	delitem 7539,.@FSC_Input;
+	
+	setd "FSC_Coin"+.@FSC_Poring,.@FSC_Input;
+	delwaitingroom "PoringGameChoose#0"+.@FSC_Poring;
+	setd "$FSC_Coin"+.@FSC_Poring,getd("$FSC_Coin"+.@FSC_Poring)+.@FSC_Input;
+	setd "$FSC_Player"+.@FSC_Poring,getd("$FSC_Player"+.@FSC_Poring)+1;
+	waitingroom "คนแทง [ "+getd("$FSC_Player"+.@FSC_Poring)+" ] รวม [ "+getd("$FSC_Coin"+.@FSC_Poring)+" ]",0;
+	setd "PoringGameRound"+.@FSC_Poring,$PoringGameRound;
+
+	mes "^FF0000[ PoringGame ]^000000";
+	mes "- ข้ารับแทงไว้เรียบร้อยแล้ว";
+	mes "- หากท่านแทงได้ถูกต้อง";
+	mes "- ให้มารับก่อนจะเริ่มหมุนรอบต่อไป";
+	close;
+	return;
+}
+
+
+
+-	script	PoringGameSetter	-1,{
+OnInit:
+	set $@PoringGamePlaying,0;
+	set $@PoringGameRunning,0;
+	donpcevent "PoringGameChoose#01::OnResetRoom";
+	donpcevent "PoringGameChoose#02::OnResetRoom";
+end;
+}

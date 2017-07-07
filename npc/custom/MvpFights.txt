@@ -1,0 +1,269 @@
+//===== rAthena Script =======================================================
+//= MVP VS MVP
+//===== By: ==================================================================
+//= คิดและเขียนโดย ใครไม่รู้
+//= โมสคริปโดย: naLizn+
+//===== Current Version: =====================================================
+//= 1.11
+//===== Compatible With: =====================================================
+//= eAthena, rAthena
+//===== Description: =========================================================
+//= พนันการต่อสู้ระหว่าง MVP
+//===== แหล่งสนทนา ===============================================================
+//= https://discordapp.com/channels/243351250077220864/243351250077220864 ====
+//============================================================================
+-	script	set_eve_mg	-1,{
+	end;
+onInit:
+	setarray $@nmob[0],2238,2236,1647,1650,2239,1651,1646,1917,1871,1719,2255,1648,2235,1832,1685,2237,1734,2253,2249,2022;
+	set $@Time,0; 
+	set $@w_mob$, "0";
+	setwall "prontera",191,159,8,6,0,"mobgam_wall";
+	setwall "prontera",191,158,8,4,0,"mobgam_walls";
+	setwall "prontera",191,150,8,6,0,"mobgam_walle";
+	setwall "prontera",199,150,10,0,0,"mobgam_walln";
+	setwall "prontera",190,160,9,6,0,"mobgam_wall02";
+	setwall "prontera",190,159,9,4,0,"mobgam_walls02";
+	setwall "prontera",190,149,9,6,0,"mobgam_walle02";
+	setwall "prontera",200,149,11,0,0,"mobgam_walln02";	
+	setcell "prontera",183,167,145,144,cell_landprotector,1;
+	setcell "prontera",183,167,145,144,cell_basilica,1;
+	donpcevent "MVP Fighter::OnResetRoom";	
+onStartBytime:	
+	if($@Time >0) {
+		while( $@ba_st==1 ){
+			set $@ba_st,8;
+				donpcevent "MVP Fighter::OnGamePlaying";
+			sleep ( $@Time * 60000 );
+		}
+	}
+end;
+}
+
+prontera,195,155,3	script	MVP Fighter	683,{
+			
+			if($@ba_st==0){
+				set $@ch_fight, rand(0,19);
+				set $@ch_fights, rand(0,19);
+				while($@ch_fights == $@ch_fight){ 
+					set $@ch_fights, rand(0,19); 
+				}
+				set $@ba_st,1;
+			}
+			
+			if($@ba_st==1||$@ba_st==8){
+				mes "^0B7E54[ MVP Fighter ]^000000";
+				mes "การต่อสู้รอบต่อไป  ";
+				mes "เป็นการประทะกันระหว่าง :";
+				mes "มุมแดงคือ: ^FF0000"+strmobinfo(1,$@nmob[$@ch_fight])+"^000000";
+				mes "มุมน้ำเงินคือ: ^0000FF"+strmobinfo(1,$@nmob[$@ch_fights])+"^000000";				
+				next;
+				
+				if(getd("MPVC_Round")!=$MPVC_Round){
+					set @plb_ch, 0;
+					mes "^0B7E54[ MVP Fighter ]^000000";
+					mes "จะแทงเท่าไหร่ดี ถ้าแทงถูกท่านจะได้ 1 เท่าของเงินเดิมพัน";
+					while(input(@pl_bet,10000,1000000)){
+						mes "แทงได้ทีละ 10k-1M";
+						mes "จะแทงไม่แทง";
+						if(select("แทง:ไม่แทง")!=1){
+							mes "ดูอย่างเดียวจะไปสนุกอารายยย~~~";
+							close;
+						}
+						next;
+					}
+					next;
+					mes "^0B7E54[ MVP Fighter ]^000000";
+					if (@pl_bet > Zeny) {
+						mes "ท่านมีเงินไม่พอ ไปหามาเพิ่มสักหน่อยสิ";
+						close;
+					}
+					mes @pl_bet+" zeny ที่ว่ามา";
+					mes "จะแทงข้างไหนดีล่ะ";
+					set @plb_ch, select("^FF0000"+strmobinfo(1,$@nmob[$@ch_fight])+"^000000:^0000FF"+strmobinfo(1,$@nmob[$@ch_fights])+"^000000");
+					set Zeny, Zeny - @pl_bet;
+					setd "MPVC_Coin",@pl_bet;
+					setd "MPVC_Side",@plb_ch;
+					setd "MPVC_Round",$MPVC_Round;
+					setd "$MVPC_Player"+@plb_ch,getd("$MVPC_Player"+@plb_ch)+1;
+					donpcevent "MVP Fighter::OnSetRoom";
+					next;
+					mes "^0B7E54[ MVP Fighter ]^000000";
+					mes "วางเงินเดิมพันเรียบร้อย";
+					mes "กลับมาข้าหากท่านทายถูก";
+					mes "ขอให้ท่านโชคดี !!!!";
+					if($@Time ==0 && getd("$MVPC_Player1")>0 && getd("$MVPC_Player2")>0 ){
+						donpcevent "MVP Fighter::OnGamePlaying";
+					}
+					if($@Time >0 && $@ba_st==1) donpcevent "set_eve_mg::onStartBytime";
+					close;
+				}else{
+					mes "^0B7E54[ MVP Fighter ]^000000";
+					if (getd("MPVC_Side")==1){
+						set .@mvpSLC$,"^FF0000มุมแดง : ["+strmobinfo(1,$@nmob[$@ch_fight])+"]^000000";
+					} else {
+						set .@mvpSLC$,"^0000FFมุมน้ำเงิน : ["+strmobinfo(1,$@nmob[$@ch_fights])+"]^000000";
+					}					
+					mes "ที่ท่านแทงไว้คือ: ";
+					mes .@mvpSLC$;
+					mes "เป็นจำนวน ^00FFFF"+getd("MPVC_Coin")+"^000000 zeny";
+					mes "กรุณารอสักครู่เกมจะเริ่มในไม่ช้า...";
+					close;
+				}
+			}
+			if($@ba_st==2){
+				mes "^0B7E54[ MVP Fighter ]^000000";
+				mes "หมดเวลาเดิมพันแล้วท่าน รอรอบหน้านะ";
+				close;
+			}
+			if(($@ba_st==3) && (getd("MPVC_Coin")>0) && (getd("MPVC_Side") == $@w_mob) && (getd("MPVC_Round")==$MPVC_Round)){
+				set Zeny, Zeny+(getd("MPVC_Coin")*2);
+				setd "MPVC_Coin", 0;
+				mes "^0B7E54[ MVP Fighter ]^000000";
+				mes "ยินดีด้วยเจ้าแทงโดน รับรงวัลไปเลยย~~~~";
+			close;
+			}
+			mes "^0B7E54[ MVP Fighter ]^000000";
+			mes "รอบใหม่ จะเริ่มในไม่ช้า โปรดรอสักครู่..";
+			close;
+OnGamePlaying:
+			announce "ขณะนี้สนามมวยซีปรีย์กำลังจะเริ่มมวยคู่เดือด "+strmobinfo(1,$@nmob[$@ch_fight])+" ปะทะ "+strmobinfo(1,$@nmob[$@ch_fights])+" ภายใน 2 นาที ขอเชิญพ่อแม่พี่น้องวางเดิมพันได้ ",0;
+			sleep 60000;
+			announce "อีก 1 นาทีกำลังจะเริ่มมวยคู่เดือด ยังรับแทงอยู่นะ",0;
+			sleep2 50000;
+			announce "เริ่มนับถอยหลัง 10 วินาที ของมวยคู่เอก",0; 	
+			sleep2 1000;announce "[ HuterGame ] : 9",0;
+			sleep2 1000;announce "[ HuterGame ] : 8",0;
+			sleep2 1000;announce "[ HuterGame ] : 7",0;
+			sleep2 1000;announce "[ HuterGame ] : 6",0;
+			sleep2 1000;announce "[ HuterGame ] : 5",0;
+			sleep2 1000;announce "[ HuterGame ] : 4",0;
+			sleep2 1000;announce "[ HuterGame ] : 3",0;
+			delwaitingroom "MVP Fighter";
+			sleep2 1000;announce "[ HuterGame ] : 2",0;
+			movenpc strnpcinfo(0),195,163;
+			sleep2 1000;announce "[ HuterGame ] : 1",0;
+			waitingroom "เกมกำลังเริ่ม ไม่รับแทงจร้า~~~",0;
+			announce "การต่อสู้ระหว่าง "+strmobinfo(1,$@nmob[$@ch_fight])+" ปะทะ "+strmobinfo(1,$@nmob[$@ch_fights])+" ได้เริ่มต้นขึ้นแล้ว   กรุณาอย่ายืนชิดขอบเวทีมิฉะนั้นท่านอาจโดนลูกหลง",0;
+			set $@ba_st, 2;
+			monster "prontera",192,158,"[มุมแดง]",$@nmob[$@ch_fight], 1,"clr_mob::Onmobkilled02",0,1;
+			monster "prontera",198,151,"[มุมน้ำเงิน]",$@nmob[$@ch_fights], 1,"clr_mob::Onmobkilled01";
+			setmapflag "prontera", mf_monster_noteleport;
+			setmapflag "prontera", mf_noskill;
+			setmapflag "prontera", mf_nomobloot;
+end;
+OnResetRoom:
+	delwaitingroom "MVP Fighter";
+	set $MVPC_Player1,0;
+	set $MVPC_Player2,0;
+	set $@ba_st,0;
+	movenpc strnpcinfo(0),195,155;
+	waitingroom "คนแทง ฝ่ายแดง[0] ฝ่ายน้ำเงิน[0]",0;
+end;
+
+OnSetRoom:
+	delwaitingroom "MVP Fighter";
+	waitingroom "คนแทง ฝ่ายแดง["+getd("$MVPC_Player1")+"] ฝ่ายน้ำเงิน["+getd("$MVPC_Player2")+"]",0;
+end;
+
+OnRedWIN:
+	delwaitingroom "MVP Fighter";
+	waitingroom "ใครแทง [มุมแดง] มารับรางวัลด้วยยย",0;
+end;
+
+OnBlueWIN:
+	delwaitingroom "MVP Fighter";
+	waitingroom "ใครแทง [มุมน้ำเงิน] มารับรางวัลด้วยยย",0;
+end;	
+}
+
+-	script	clr_mob	-1,{
+Onmobkilled01:
+			if(mobcount("prontera","clr_mob::Onmobkilled01")==0){
+				sleep2 10000;
+				set $@ba_st, 3;
+				
+				announce strmobinfo(1,$@nmob[$@ch_fight])+" มุมแดงชนะน็อคเอาท์ ใครแทงไว้กรุณามารับเงินภายในสองนาที",0;
+				set $@w_mob, 1;
+				donpcevent "MVP Fighter::OnRedWIN";
+				sleep2 120000;
+				killmonster "prontera","clr_mob::Onmobkilled02";
+				set $@ba_st, 0;
+				set $@w_mob, 0;
+				set $MPVC_Round,$MPVC_Round+1;
+				announce "หมดเวลาปิดโต๊ะ ",0;
+				removemapflag "prontera", mf_monster_noteleport;
+				removemapflag "prontera", mf_noskill;
+				removemapflag "prontera", mf_nomobloot;
+				donpcevent "MVP Fighter::OnResetRoom";
+			end;
+			}
+
+Onmobkilled02:
+			if(mobcount("prontera","clr_mob::Onmobkilled02")==0){
+				set $@ba_st, 3;
+				sleep2 10000;
+				announce strmobinfo(1,$@nmob[$@ch_fights])+" มุมน้ำเงินชนะน็อคเอ้าท์ ใครแทงไว้กรุณามารับเงินภายใน 2 นาที",0;
+				set $@w_mob, 2;
+				donpcevent "MVP Fighter::OnBlueWIN";
+				sleep2 120000;
+				killmonster "prontera","clr_mob::Onmobkilled01";
+				set $@ba_st, 0;
+				set $@w_mob, 0;
+				set $MPVC_Round,$MPVC_Round+1;
+				announce "หมดเวลาปิดโต๊ะ ",0;
+				removemapflag "prontera", mf_monster_noteleport;
+				removemapflag "prontera", mf_noskill;
+				removemapflag "prontera", mf_nomobloot;
+				donpcevent "MVP Fighter::OnResetRoom";
+			end;
+			}
+}
+
+
+
+prontera,190,160,3	script	No_entry	1721,{}
+prontera,191,160,3	duplicate(No_entry)	No entry#01	1084,{}
+prontera,192,160,3	duplicate(No_entry)	No entry#02	1084,{}
+prontera,193,160,3	duplicate(No_entry)	No entry#03	1084,{}
+prontera,194,160,3	duplicate(No_entry)	No entry#04	1084,{}
+prontera,195,160,3	duplicate(No_entry)	No entry#05	1084,{}
+prontera,196,160,3	duplicate(No_entry)	No entry#06	1084,{}
+prontera,197,160,3	duplicate(No_entry)	No entry#07	1084,{}
+prontera,198,160,3	duplicate(No_entry)	No entry#08	1084,{}
+prontera,199,160,3	duplicate(No_entry)	No entry#09	1084,{}
+
+prontera,190,159,3	duplicate(No_entry)	No entry#10	1084,{}
+prontera,190,158,3	duplicate(No_entry)	No entry#11	1084,{}
+prontera,190,157,3	duplicate(No_entry)	No entry#12	1084,{}
+prontera,190,156,3	duplicate(No_entry)	No entry#13	1084,{}
+prontera,190,155,3	duplicate(No_entry)	No entry#14	1084,{}
+prontera,190,154,3	duplicate(No_entry)	No entry#15	1084,{}
+prontera,190,153,3	duplicate(No_entry)	No entry#16	1084,{}
+prontera,190,152,3	duplicate(No_entry)	No entry#17	1084,{}
+prontera,190,151,3	duplicate(No_entry)	No entry#18	1084,{}
+prontera,190,150,3	duplicate(No_entry)	No entry#19	1084,{}
+
+prontera,190,149,3	duplicate(No_entry)	No entry#20	1721,{}
+prontera,191,149,3	duplicate(No_entry)	No entry#21	1084,{}
+prontera,192,149,3	duplicate(No_entry)	No entry#22	1084,{}
+prontera,193,149,3	duplicate(No_entry)	No entry#23	1084,{}
+prontera,194,149,3	duplicate(No_entry)	No entry#24	1084,{}
+prontera,195,149,3	duplicate(No_entry)	No entry#25	1084,{}
+prontera,196,149,3	duplicate(No_entry)	No entry#26	1084,{}
+prontera,197,149,3	duplicate(No_entry)	No entry#27	1084,{}
+prontera,198,149,3	duplicate(No_entry)	No entry#28	1084,{}
+prontera,199,149,3	duplicate(No_entry)	No entry#29	1084,{}
+
+prontera,200,149,3	duplicate(No_entry)	No entry#30	1721,{}
+prontera,200,150,3	duplicate(No_entry)	No entry#31	1084,{}
+prontera,200,151,3	duplicate(No_entry)	No entry#32	1084,{}
+prontera,200,152,3	duplicate(No_entry)	No entry#33	1084,{}
+prontera,200,153,3	duplicate(No_entry)	No entry#34	1084,{}
+prontera,200,154,3	duplicate(No_entry)	No entry#35	1084,{}
+prontera,200,155,3	duplicate(No_entry)	No entry#36	1084,{}
+prontera,200,156,3	duplicate(No_entry)	No entry#37	1084,{}
+prontera,200,157,3	duplicate(No_entry)	No entry#38	1084,{}
+prontera,200,158,3	duplicate(No_entry)	No entry#39	1084,{}
+prontera,200,159,3	duplicate(No_entry)	No entry#40	1084,{}
+prontera,200,160,3	duplicate(No_entry)	No entry#41	1721,{}
